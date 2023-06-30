@@ -1,12 +1,14 @@
 # Installer un serveur de DNS sous Debian 11 & Debian 12.
 
-Serveur DNS
+Serveur DNS :
 
-Le service DNS est essentiel aux réseaux et surtout à Internet. Il est utilisé par meme si les utilisateurs ne le réalisent pas. En effet, les échanges sur les réseaux se font à partir d'adresses IP de la forme 216.239.37.99
+Le service DNS est essentiel aux réseaux et surtout à Internet. Il est utilisé par meme si les utilisateurs ne le réalisent pas. En effet, les échanges sur les réseaux se font à partir d'adresses IP de la forme 216.239.37.99.
 
-Chaque utilisateur est connecté par une adresse IP, et lorsque l'on se connecte à un site, on envoie des mails on sollicite en fait une IP. Pourquoi les utilisateurs ne voient pas les IP ? Car pour accéder à Internet, un PC a besoin de l'IP d'un serveur DNS. Ce serveur DNS va faire pour lui les résolutions DNS, c'est-à-dire convertir les noms en IP (et les IP en nom si necessaire). Par exemple, lorsque vous ouvrez un navigateur et pointez sur http://www.google.fr, votre PC envoie une requête à votre serveur DNS qui lui dit www.google.com = 216.239.37.99 et votre navigateur sollicite en réalité http://216.239.37.99
+Chaque utilisateur est connecté par une adresse IP, et lorsque l'on se connecte à un site, on envoie des mails on sollicite en fait une IP. Pourquoi les utilisateurs ne voient pas les IP ? Car pour accéder à Internet, un PC a besoin de l'IP d'un serveur DNS. Ce serveur DNS va faire pour lui les résolutions DNS, c'est-à-dire convertir les noms en IP (et les IP en nom si necessaire). Par exemple, lorsque vous ouvrez un navigateur et pointez sur http://www.google.fr, votre PC envoie une requête à votre serveur DNS qui lui dit www.google.com = 216.239.37.99 et votre navigateur sollicite en réalité http://216.239.37.99.
 
-Lorsque vous vous abonnez à un FAI, celui-ci vous fournit les IP des serveurs DNS de votre FAI. Par exemple pour wanadoo, il s'agit de 193.252.19.3 et 193.252.19.4 ou pour nerim 62.4.16.70 et 62.4.17.69 
+Lorsque vous vous abonnez à un FAI, celui-ci vous fournit les IP des serveurs DNS de votre FAI.
+
+Par exemple pour wanadoo, il s'agit de 193.252.19.3 et 193.252.19.4 ou pour nerim 62.4.16.70 et 62.4.17.69.
 
 Si vous avez un réseau informatique, il est intéressant d'installer son propre serveur DNS. Celui-ci gérera non seulement les résolutions DNS du web mais aussi les resolutions de votre réseau local, c'est-à-dire convertir les noms de vos machines et leur IP (locales si vous n'avez pas acheté d'IP fixes). Celui-ci agira donc comme serveur DNS de cache. Les machines du réseau n'iront donc plus chercher les services DNS chez votre FAI mais ils iront sur votre serveur.
 
@@ -14,12 +16,12 @@ On peut aussi configurer le serveur DNS en tant que que serveur DNS primaire pou
 
 Les adresses des serveurs DNS sont stockées dans le fichier /etc/resolv.conf qui contient une ou plusieurs adresses IP (il peut être utile d'avoir un serveur DNS secondaire prêt à pallier le premier en cas de pépin).
 
-But de ce document
+But de ce document.
 
 Ce document me sert de mémo pour installer un serveur Bind 9 sur une Debian. 
-Ce document a été testé sur Debian Sarge Debian Etch Debian Lenny et Ubuntu 8.04
+Ce document a été testé sur Debian
 
-Pré-requis
+Pré-requis :
 
 Avoir installé au préalable un des OS cité si dessus.
 
