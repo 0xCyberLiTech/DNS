@@ -1,189 +1,328 @@
 # Installer un serveur de DNS sous Debian 11 & Debian 12.
 
-Nous utiliserons la brique Bind9. Mon objectif est de référencer quelques serveurs avec des enregistrements de type A, et de spécifier un redirecteur.
+Serveur DNS
 
-On va voir ici comment mettre cela en place de la façon la plus simple qui soit. La base de la base, sans prise de tête. Mais la base c’est important ! En commençant par la, vous pourrez ensuite implémenter les divers paramètres dont vous aurez besoin plus tard.
+Le service DNS est essentiel aux réseaux et surtout à Internet. Il est utilisé par meme si les utilisateurs ne le réalisent pas. En effet, les échanges sur les réseaux se font à partir d'adresses IP de la forme 216.239.37.99
 
-- Je suis sur une Debian 12, installation minimale sens interface graphyque.
-- J’ai 6 hôtes sur mon réseau.
-- Je n’ai pas de contrôleur de domaine, je souhaite juste référencer mes hôtes et leurs IP.
-- Je n’ai pas non plus de serveur mail.
-- Je souhaite que mon DNS redirige les requêtes qu’il ne sait pas résoudre.
-- Mon domaine sera cyberlitech.lan
+Chaque utilisateur est connecté par une adresse IP, et lorsque l'on se connecte à un site, on envoie des mails on sollicite en fait une IP. Pourquoi les utilisateurs ne voient pas les IP ? Car pour accéder à Internet, un PC a besoin de l'IP d'un serveur DNS. Ce serveur DNS va faire pour lui les résolutions DNS, c'est-à-dire convertir les noms en IP (et les IP en nom si necessaire). Par exemple, lorsque vous ouvrez un navigateur et pointez sur http://www.google.fr, votre PC envoie une requête à votre serveur DNS qui lui dit www.google.com = 216.239.37.99 et votre navigateur sollicite en réalité http://216.239.37.99
 
-Configurer le réseau en statique :
+Lorsque vous vous abonnez à un FAI, celui-ci vous fournit les IP des serveurs DNS de votre FAI. Par exemple pour wanadoo, il s'agit de 193.252.19.3 et 193.252.19.4 ou pour nerim 62.4.16.70 et 62.4.17.69 
 
-Configurez d’abord l’interface réseau de votre serveur en statique.
+Si vous avez un réseau informatique, il est intéressant d'installer son propre serveur DNS. Celui-ci gérera non seulement les résolutions DNS du web mais aussi les resolutions de votre réseau local, c'est-à-dire convertir les noms de vos machines et leur IP (locales si vous n'avez pas acheté d'IP fixes). Celui-ci agira donc comme serveur DNS de cache. Les machines du réseau n'iront donc plus chercher les services DNS chez votre FAI mais ils iront sur votre serveur.
 
-Le nom d’hôte de mon serveur est NS1.
-L’IP de mon serveur est 192.168.50.200/24
+On peut aussi configurer le serveur DNS en tant que que serveur DNS primaire pour gérer un (ou plusieurs) noms de domaines.
 
-## Installer Bind9
+Les adresses des serveurs DNS sont stockées dans le fichier /etc/resolv.conf qui contient une ou plusieurs adresses IP (il peut être utile d'avoir un serveur DNS secondaire prêt à pallier le premier en cas de pépin).
+
+But de ce document
+
+Ce document me sert de mémo pour installer un serveur Bind 9 sur une Debian. 
+Ce document a été testé sur Debian Sarge Debian Etch Debian Lenny et Ubuntu 8.04
+
+Pré-requis
+
+Avoir installé au préalable un des OS cité si dessus.
+
+Présentation rapide d’un système DNS
+
+L’architecture de réseau TCP/IP sur lequel est basé Internet et la plupart des réseaux locaux actuels, utilisent des adresses IP numériques du type 192.168.0.1. Mais pour faciliter la lecture de ces adresses par l’homme, un système permet de transformer ces adresses en adresses plus lisibles comme www.linuxfacilepourtous.lan
+
+Pour effectuer cette opération, il est nécessaire d’utiliser des serveurs DNS. Un serveur DNS fera donc la correspondance entre les adresses IP et les noms des domaines.
+
+Un serveur DNS s’occupe en général d’un domaine limité et s’occupe de transmettre les questions à d’autres serveurs s’il ne connaît pas la répons
+
+Principe de fonctionnement de la recherche de noms
+
+Lorsque qu’une demande de résolution de nom est demandée, Linux commence par regarder le fichier « /etc/host.conf : »
+
+# The "order" line is only used by old versions of the C library. 
+order hosts,bind 
+multi on
+
+La première ligne de ce fichier indique qu’il faut commencer la recherche en regardant la table hosts locale et ensuite il faut interroger le serveur DNS.
+
+La table hosts locale est enregistrée dans le fichier « /etc/hosts » elle contient une table de correspondance entre des adresses IP et des noms, elle ressemble à :
+```
+127.0.0.1           localhost.localdomain                 localhost 
+192.168.0.253       cybernatus.linuxfacilepourtous.lan    cybernatus 
+```
+La première ligne est obligatoire pour que le système fonctionne même quand le réseau est désactivé. L’adresse IP 127.0.0.1 est toujours associée au nom localhost.
+
+Les lignes suivantes peuvent être ajoutées manuellement pour faire la correspondance entre des adresses IP et des noms. C’est ce qui est fait en l’absence de serveur DNS.
+
+Si le résultat n’est pas trouvé dans la table hosts,le système recherche le serveur DNS indiqué dans le fichier « /etc/resolv.conf» :
+```
+search linuxfacilepourtous.lan 
+nameserver 192.168.0.253
+nameserver 194.2.0.50
+```
+La première ligne indique quel domaine il faut ajouter au noms si celui-ci n’est pas indiqué lors d’une demande de résolution de nom. 
+
+Exemple : 
+
+ping monserveur.mondomaine.com -> Aucun domaine ne sera ajouté lors de la résolution du nom, car le domaine est fourni.
+
+ping monserveur -> Le domaine mondomaine.com, sera ajouté avant d’effectuer la demande de résolution du nom (La recherche du nom, portera donc sur monserveur.mondomaine.com)
+
+La deuxième ligne indique le serveur DNS principal.
+
+Et c’est donc le serveur DNS qui sera chargé de donner le résultat s’il connaît la réponse ou de transmettre la question à un autre serveur DNS.
+
+Si le serveur principal n’est pas disponible, le serveur DNS indiqué sur la ligne suivante sera utilisé.
+
+Pourquoi installer un serveur DNS 
+
+Pour au moins deux raisons :
+
+Éviter de tenir à jour la table hosts de chaque poste client d’un réseau. 
+Avoir un cache DNS qui accélère la recherche des noms. 
+Sur un réseau locale, un serveur DNS permet d’accélérer le trafic sur le réseau car de nombreux services ont besoins d’un serveur DNS bien configuré pour fonctionner correctement (WEB, POP, SMTP,..)
+
+Sous Debian, il faut installer le paquet suivant :
 ```
 apt-get install bind9
 ```
-Les fichiers de conf :
-
-named.conf
-
-Par défaut il ne contient que des includes vers les fichiers suivants :
-
-/etc/bind/named.conf.options          # Le fichier de configuration.
-/etc/bind/named.conf.local            # Le fichier avec nos zones.
-/etc/bind/named.conf.default-zones    # Le fichier avec les zones par défaut.
-
-On va donc configurer Bind dans le fichier named.conf.options :
-
-named.conf.options
-Exemple, avec quelques annotations. A vous d’adapter le vôtre :
-...
-options {
-      directory « /var/cache/bind »;
-
-      forwarders { 8.8.8.8; };                           # Entrez l’IP d’un serveur DNS public qui saura résoudre ce qui n’appartient pas à votre réseau. Ici il s’agit d’un DNS de Google.
-      auth-nxdomain no;                                  # Le serveur n’enregistrera pas les réponses négatives (« je ne sais pas résoudre cela ») dans son cache.*
-      listen-on-v6 { none; };                            # Si votre serveur n’a pas de carte réseau en IPv6, mettez cette directive.
-      listen-on { 127.0.0.1 ; 192.168.50.200 ;};         # Entrez ici les IP des interfaces réseau du serveur DNS qui peuvent recevoir des requête DNS.
-      allow-transfer {none;};                            # Je n’ai pas de DNS secondaire donc pas de transfert de zones à activer.
-      allow-query { 192.168.50.0/24; localhost; };       # autoriser les requêtes provenant seulement du réseau spécifié et du loopback.
-      allow-recursion { 192.168.50.0/24; localhost; };   # Même principe mais pour les recherches récursives**.
-      version none;                                      # Ne pas diffuser la version de Bind.
-}
+Fichier de Configuration Principal (/etc/bind/named.conf)
 ```
-Enregistrez le fichier.
+key "rndc-key" { 
+       algorithm hmac-md5; 
+       secret "kKf6n5FNQaRGBM4NSUROUA=="; 
+}; 
 
-*NXDOMAIN est un message que le DNS vous renvoie s’il ne sait pas résoudre une requête. Par exemple, vous lui demandez quel est l’IP de cyberlitech.fr, votre serveur cherche et ne trouve nulle part, il va vous envoyer l’erreur NXDOMAIN, et si l’option est active, enregistrer cette erreur dans son cache. Cela implique que si cyberlitech.fr devient trouvable plus tard, votre DNS vous renverra quand même NXDOMAIN sans chercher plus loin puisque c’est la réponse qui se trouve dans son cache ! Donc c’est nul, on le désactive ^^
+controls { 
+       inet 127.0.0.1 port 953 
+               allow { 127.0.0.1; } keys { "rndc-key"; }; 
+}; 
 
-**Les requêtes récursives demandent à votre DNS de se renseigner auprès des autres serveurs DNS s’il ne sait pas résoudre votre requête. C’est votre serveur DNS qui vous enverra la résolution, ou une erreur s’il ne parvient pas à trouver votre réponse. Votre DNS va chercher une réponse récursivement dans sa hiérarchie de DNS, puis vous répondre.
+zone "." { 
+	type hint; 
+	file "/etc/bind/db.root"; 
+}; 
 
-La requête récursive vient en opposition à la requête itérative qui fonctionne différemment. Si votre DNS ne contient pas la résolution demandée, il vous envoie l’IP du DNS supérieur et c’est « vous » qui questionnez le DNS supérieur.
+zone "localhost" { 
+	type master; 
+	file "/etc/bind/db.local"; 
+}; 
 
-Le mode récursif semble plus intéressant car votre DNS enregistrera à mesure ses nouvelles connaissances dans son cache. Ce ne sera pas le cas en itératif puisque en fin de compte quand vous obtenez votre réponse ce n’est plus avec votre DNS que vous êtes en train de communiquer. On autorise donc les recherches récursives ici.
+zone "127.in-addr.arpa" { 
+	type master; 
+	file "/etc/bind/db.127"; 
+}; 
 
-named.conf.local
-On va maintenant créer la zone associée au domaine, ainsi que la zone de recherche inversée. 
+zone "0.in-addr.arpa" { 
+	type master; 
+	file "/etc/bind/db.0"; 
+}; 
 
-Voici mon fichier named.conf.local, adaptez à votre sauce :
+zone "255.in-addr.arpa" { 
+	type master; 
+	file "/etc/bind/db.255"; 
+}; 
+
+// add entries for other zones below here 
+
+include "/etc/bind/named.conf.local"; 
+include "/etc/bind/named.conf.options";
 ```
-zone « cyberlitech.lan » {                        # Entrez votre nom de domaine. 
-      type master;                                # Le serveur a autorité sur ce domaine, même s’il n’y a pas de slave dans cet exemple.
-      file « /var/cache/bind/db.cyberlitech.lan« ;  # On défini le fichier de zone (qui contiendra les enregistrements).
-      forwarders {};                              # On ne redirige pas les requêtes concernant le domaine cyberlitech.lan.
-      allow-update {none;};                       # Dans cet exemple on ne souhaite pas que le DNS soit mis à jour dynamiquement. Mais si vous avez un DHCP ou autre renseignez-vous là-dessus.
+Fichier de Configuration (/etc/bind/named.conf.local)
+```
+// 
+// Do any local configuration here 
+// 
+
+// Consider adding the 1918 zones here, if they are not used in your 
+// organization 
+//include "/etc/bind/zones.rfc1918"; 
+
+zone "linuxfacilepourtous.lan" { 
+	type master; 
+	notify no ; 
+	file "/etc/bind/db.linuxfacilepourtous.lan"; 
+// allow-update { key rndc-key; }; 
+allow-update { 192.168.0.253; }; 
+}; 
+
+zone "0.168.192.in-addr.arpa" { 
+	type master; 
+	notify no ; 
+	file "/etc/bind/db.linuxfacilepourtous.lan.reversed"; 
+// allow-update { key rndc-key; }; 
+allow-update { 192.168.0.253; }; 
+}; 
+
+// Anti Spam Orange 
+
+zone "orange.fr" { 
+	type forward; 
+	forward only; 
+	forwarders { 
+	80.10.246.3; 
+	81.253.149.1; 
+	}; 
+}; 
+
+zone "246.10.80.in-addr.arpa" { 
+	type forward; 
+	forward only; 
+	forwarders { 
+	80.10.246.3; 
+	81.253.149.1; 
+	}; 
+}; 
+```
+Fichier de Configuration (/etc/bind/named.conf.options)
+```
+options { 
+	directory "/var/cache/bind"; 
+
+	// If there is a firewall between you and nameservers you want 
+	// to talk to, you might need to uncomment the query-source 
+	// directive below.  Previous versions of BIND always asked 
+	// questions using port 53, but BIND 8.1 and later use an unprivileged 
+	// port by default. 
+
+	// query-source address * port 53; 
+
+	// If your ISP provided one or more IP addresses for stable 
+	// nameservers, you probably want to use them as forwarders.  
+	// Uncomment the following block, and insert the addresses replacing 
+	// the all-0's placeholder. 
+
+	// forwarders { 
+	// 	0.0.0.0; 
+	// }; 
+
+	forwarders { 
+	 	80.10.246.3; 
+		81.253.149.1; 
+	 }; 
+
+	auth-nxdomain no;    # conform to RFC1035 
+	listen-on-v6 { any; }; 
 };
 ```
-# Voila pour la zone principale. En dessous on met la zone inversée. Si vous ne comprenez pas ce que c’est, je vous invite à commencer plutôt par un cours sur DNS :
+Fichier de Configuration (/etc/bind/db.linuxfacilepourtous.lan)
 ```
-zone « 50.168.192.in-addr.arpa » {
-      type master;
-      file « /var/cache/bind/db.cyberlitech.lan.inv » ;
-      forwarders{};
-      allow-update{none;};
+@	IN	SOA	cybernatus.linuxfacilepourtous.lan. postmaster.cybernatus.linuxfacilepourtous.lan. ( 
+			1999112002 ; numéro de série 
+			28800 ; rafraichissement 
+			14400 ; nouvel essais 
+			604800 ; expiration 
+			86400 ) ; temps de vie minimum 
+@	IN 	NS	cybernatus 
+@	IN	NS	cybernatus.linuxfacilepourtous.lan. 
+@	IN	MX	10 cybernatus 
+@	IN	MX	20 cybernatus.linuxfacilepourtous.lan.	 
+
+; serveurs de noms en local 
+@	IN A	127.0.0.1		; localhost 
+@	IN A	192.168.0.253	; serveur principal 
+
+; adresses IP des serveurs 
+locahost		IN A	127.0.0.1 
+cybernatus		IN A	192.168.0.253	 
+
+; adresses IP des machines du reseau 
+PC-01		IN A	192.168.0.101 
+PC-02		IN A	192.168.0.102 
+PC-03		IN A	192.168.0.103 
+PC-04		IN A	192.168.0.104 
+PC-05		IN A	192.168.0.105 
+
+; aliases 
+www 		IN CNAME 	cybernatus.linuxfacilepourtous.lan. 
+ssh 		IN CNAME 	cybernatus.linuxfacilepourtous.lan. 
+pop 		IN CNAME 	cybernatus.linuxfacilepourtous.lan. 
+smtp 		IN CNAME 	cybernatus.linuxfacilepourtous.lan. 
+smtps 	IN CNAME 	cybernatus.linuxfacilepourtous.lan. 
+pops 		IN CNAME 	cybernatus.linuxfacilepourtous.lan. 
+imap 		IN CNAME 	cybernatus.linuxfacilepourtous.lan. 
+ftp 		IN CNAME 	cybernatus.linuxfacilepourtous.lan. 
+webmail 	IN CNAME 	cybernatus.linuxfacilepourtous.lan. 
+web 		IN CNAME 	cybernatus.linuxfacilepourtous.lan. 
+stats 	IN CNAME 	cybernatus.linuxfacilepourtous.lan. 
+```
+Fichier de Configuration (/etc/bind/db.linuxfacilepourtous.lan.reversed)
+```
+@	IN	SOA	cybernatus.linuxfacilepourtous.lan. postmaster.cybernatus.linuxfacilepourtous.lan. ( 
+			1999112002 ; numéro de série 
+			28800 ; rafraichissement 
+			14400 ; nouvel essais 
+			604800 ; expiration 
+			86400 ) ; temps de vie minimum	 
+; serveurs de noms 
+	IN	NS	cybernatus.linuxfacilepourtous.lan. 
+
+; adresses IP inverses 
+253	IN PTR	cybernatus.linuxfacilepourtous.lan.	 
+101	IN PTR	PC-01.linuxfacilepourtous.lan. 
+102	IN PTR	PC-02.linuxfacilepourtous.lan. 
+103	IN PTR	PC-03.linuxfacilepourtous.lan. 
+104	IN PTR	PC-04.linuxfacilepourtous.lan. 
+105	IN PTR	PC-05.linuxfacilepourtous.lan.
+```
+Fichier de Configuration (/etc/bind/rndc.conf)
+```
+# Start of rndc.conf 
+key "rndc-key" { 
+	algorithm hmac-md5; 
+	secret "kKf6n5FNQaRGBM4NSUROUA=="; 
+}; 
+
+options { 
+	default-key "rndc-key"; 
+	default-server 127.0.0.1; 
+	default-port 953; 
+}; 
+
+# End of rndc.conf 
+
+# Use with the following in named.conf, adjusting the allow list as needed: 
+# key "rndc-key" { 
+# 	algorithm hmac-md5; 
+# 	secret "kKf6n5FNQaRGBM4NSUROUA=="; 
+# }; 
+# 
+# controls { 
+# 	inet 127.0.0.1 port 953 
+# 		allow { 127.0.0.1; } keys { "rndc-key"; }; 
+# }; 
+# End of named.conf
+```
+Fichier de Configuration (/etc/bind/rndc.key)
+```
+key "rndc-key" { 
+	algorithm hmac-md5; 
+	secret "kKf6n5FNQaRGBM4NSUROUA=="; 
 };
 ```
-Enregistrez le fichier.
-
-On va ensuite configurer nos zones de recherche :
-
-Création des fichiers de zones.
-
-Les fichiers auxquels se rapporte named.conf.local n’existent pas. Il faut les créer et on va commencer à inscrire des enregistrement DNS. 
-
-Fichier de résolution de noms db.cyberlitech.lan
-```
-nano /var/cache/bind/db.cyberlitech.lan
-```
-Pour info la casse n’est pas prise en compte sur les noms d’hôtes.
+Fichier de Configuration (/etc/bind/db.root)
 
 ```
-$TTL    3600 
-@      IN     SOA    dns01.cyberlitech.lan   root.cyberlitech.lan   (  
-2021113001   
-3600  
-600
-86400
-600 )
-
-;
-
-@              IN     NS     dns01
-
-@              IN     MX     1     mail01      # Juste pour l’exemple si présence de serveur mail sur le domaine.
-ns1            IN     A      192.168.50.200
-srv-linux-02   IN     A      192.168.50.201
-srv-linux-03   IN     A      192.168.50.202
-srv-linux-04   IN     A      192.168.50.203
-srv-linux-05   IN     A      192.168.50.204
-srv-linux-06   IN     A      192.168.50.205
-
-mail01         IN     A    192.168.50.0        # Juste pour l’exemple si présence de serveur mail sur le domaine.
-
-dns     IN     CNAME    ns1
+.                        3600000  IN  NS    A.ROOT-SERVERS.NET. 
+A.ROOT-SERVERS.NET.      3600000      A     198.41.0.4 
+.                        3600000      NS    B.ROOT-SERVERS.NET. 
+B.ROOT-SERVERS.NET.      3600000      A     128.9.0.107 
+.                        3600000      NS    C.ROOT-SERVERS.NET. 
+C.ROOT-SERVERS.NET.      3600000      A     192.33.4.12 
+.                        3600000      NS    D.ROOT-SERVERS.NET. 
+D.ROOT-SERVERS.NET.      3600000      A     128.8.10.90 
+.                        3600000      NS    E.ROOT-SERVERS.NET. 
+E.ROOT-SERVERS.NET.      3600000      A     192.203.230.10 
+.                        3600000      NS    F.ROOT-SERVERS.NET. 
+F.ROOT-SERVERS.NET.      3600000      A     192.5.5.241 
+.                        3600000      NS    G.ROOT-SERVERS.NET. 
+G.ROOT-SERVERS.NET.      3600000      A     192.112.36.4 
+.                        3600000      NS    H.ROOT-SERVERS.NET. 
+H.ROOT-SERVERS.NET.      3600000      A     128.63.2.53 
+.                        3600000      NS    I.ROOT-SERVERS.NET. 
+I.ROOT-SERVERS.NET.      3600000      A     192.36.148.17 
+.                        3600000      NS    J.ROOT-SERVERS.NET. 
+J.ROOT-SERVERS.NET.      3600000      A     198.41.0.10 
+.                        3600000      NS    K.ROOT-SERVERS.NET. 
+K.ROOT-SERVERS.NET.      3600000      A     193.0.14.129 
+.                        3600000      NS    L.ROOT-SERVERS.NET. 
+L.ROOT-SERVERS.NET.      3600000      A     198.32.64.12 
+.                        3600000      NS    M.ROOT-SERVERS.NET. 
+M.ROOT-SERVERS.NET.      3600000      A     202.12.27.33
 ```
-Les nombres entre parenthèses sont des directives de délais concernant les rafraichissements des DNS esclaves. Dans cet exemple ça ne nous intéresse pas puisque nous n’avons qu’un seul DNS, mais c’est important à savoir). Le TTL indique combien de temps doit s’écouler entre les mises à jour d’infos entre serveurs DNS. Notre serveur sera vérifié toutes les heures (3600 secondes). Encore une fois ce n’est pas important pour notre exemple.
-
-L’enregistrement NS indique le DNS qui fait autorité.
-
-L’enregistrement MX pointe un serveur mail. Je n’en ai pas mais je le mets pour l’exemple. On peut en mettre plusieurs et #définir une priorité en le précédent d’un chiffre (ici 1 qui est la plus #haute priorité).
-
-La valeur IN signifie Internet. Il en existe d’autres mais c’est assez spécifique j’ai l’impression. Nous on laissera IN.
-
-L’enregistrement CNAME permet de créer un alias. Un nom qui pointe vers un autre nom.
-
-Et enfin les enregistrements de type A pour référencer les hôtes de mon réseau.
- 
-Enregistrez le fichier.
-
-Fichier de résolution inverse db.cyberlitech.lan.inv
-Et enfin on créer le fichier de résolution inversée.
-```
-@      IN     SOA    dns01.cyberlitech.lan.   root.cyberlitech.lan.   (  
-2021113001   
-3600  
-600
-86400
-600 )
-;
-
-       IN     NS     ns1.cyberlitech.lan.
-
-2     IN     PTR     srv-linux-01.cyberlitech.lan.
-3     IN     PTR     srv-linux-02.cyberlitech.lan.
-4     IN     PTR     srv-linux-03.cyberlitech.lan.
-5     IN     PTR     srv-linux-04.cyberlitech.lan.
-6     IN     PTR     srv-linux-05.cyberlitech.lan.
-7     IN     PTR     ns1.cyberlitech.lan.
-```
-
-Le chiffre qui se trouve en début de ligne est le dernier bloc de l’IP de chaque hôte.
-N’oubliez pas de mettre un point à la fin de chaque nom de domaine !
-Enregistrez le fichier.
-
-Redémarrer le service et le tester.
-
-On va redémarrer le service, s’assurer qu’il se lance au démarrage de Debian, et tester les fonctions du DNS en local.
-
-Vous pouvez également tester la bonne fonction du DNS depuis une autre machine du réseau. Pour cela pensez à déclarer l’IP du serveur DNS dans ses paramètres réseau.
-
-Le service associé à Bind, sous Debian en tous cas, se nomme named.
-
-->Vous avez envie que le service démarre en même tant que l’OS :
-```
-systemctl enable named
-```
--> Après toutes nos bidouilles, il faut redémarrer le service :
-```
-systemctl restart named
-```
-Si vous avez une erreur de démarrage c’est que vous avez fait une erreur de syntaxe dans un de vos fichiers.
-->Testez la zone de recherche directe :
-```
-host -t A srv-linux-02
-```
-Doit vous afficher l’IP de l’hôte srv-linux-02.
-->Testez la zone de recherche inversée :
-```
-host -t ptr 172.16.0.3
-```
-Doit vous afficher le nom associé à l’ip 172.16.0.3.
-En théorie, si vous ne vous êtes pas planté sur un point ou une accolade, vous avez maintenant un serveur DNS basique fonctionnel. A vous d’y implémenter les options nécessaire le cas échéant.
