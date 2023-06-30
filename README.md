@@ -46,7 +46,7 @@ La première ligne de ce fichier indique qu’il faut commencer la recherche en 
 La table hosts locale est enregistrée dans le fichier « /etc/hosts » elle contient une table de correspondance entre des adresses IP et des noms, elle ressemble à :
 ```
 127.0.0.1           localhost.localdomain                 localhost 
-192.168.0.253       srv-linux-01.cyberlitech.lan    srv-linux-01 
+192.168.50.200      srv-linux-01.cyberlitech.lan          srv-linux-01 
 ```
 La première ligne est obligatoire pour que le système fonctionne même quand le réseau est désactivé. L’adresse IP 127.0.0.1 est toujours associée au nom localhost.
 
@@ -55,8 +55,8 @@ Les lignes suivantes peuvent être ajoutées manuellement pour faire la correspo
 Si le résultat n’est pas trouvé dans la table hosts,le système recherche le serveur DNS indiqué dans le fichier « /etc/resolv.conf» :
 ```
 search cyberlitech.lan 
-nameserver 192.168.0.253
-nameserver 194.2.0.50
+nameserver 192.168.50.200
+nameserver 194.168.50.1
 ```
 La première ligne indique quel domaine il faut ajouter au noms si celui-ci n’est pas indiqué lors d’une demande de résolution de nom. 
 
@@ -72,19 +72,21 @@ Et c’est donc le serveur DNS qui sera chargé de donner le résultat s’il co
 
 Si le serveur principal n’est pas disponible, le serveur DNS indiqué sur la ligne suivante sera utilisé.
 
-Pourquoi installer un serveur DNS 
+## Pourquoi installer un serveur DNS ?
 
 Pour au moins deux raisons :
 
 Éviter de tenir à jour la table hosts de chaque poste client d’un réseau. 
+
 Avoir un cache DNS qui accélère la recherche des noms. 
+
 Sur un réseau locale, un serveur DNS permet d’accélérer le trafic sur le réseau car de nombreux services ont besoins d’un serveur DNS bien configuré pour fonctionner correctement (WEB, POP, SMTP,..)
 
 Sous Debian, il faut installer le paquet suivant :
 ```
 apt-get install bind9
 ```
-Fichier de Configuration Principal (/etc/bind/named.conf)
+Fichier de Configuration Principal (/etc/bind/named.conf).
 ```
 key "rndc-key" { 
        algorithm hmac-md5; 
@@ -126,7 +128,7 @@ zone "255.in-addr.arpa" {
 include "/etc/bind/named.conf.local"; 
 include "/etc/bind/named.conf.options";
 ```
-Fichier de Configuration (/etc/bind/named.conf.local)
+Fichier de Configuration (/etc/bind/named.conf.local).
 ```
 // 
 // Do any local configuration here 
@@ -141,15 +143,15 @@ zone "cyberlitech.lan" {
 	notify no ; 
 	file "/etc/bind/db.cyberlitech.lan"; 
 // allow-update { key rndc-key; }; 
-allow-update { 192.168.0.253; }; 
+allow-update { 192.168.50.200; }; 
 }; 
 
-zone "0.168.192.in-addr.arpa" { 
+zone "50.168.192.in-addr.arpa" { 
 	type master; 
 	notify no ; 
 	file "/etc/bind/db.cyberlitech.lan.reversed"; 
 // allow-update { key rndc-key; }; 
-allow-update { 192.168.0.253; }; 
+allow-update { 192.168.50.200; }; 
 }; 
 
 // Anti Spam Orange 
@@ -218,18 +220,18 @@ Fichier de Configuration (/etc/bind/db.cyberlitech.lan)
 
 ; serveurs de noms en local 
 @	IN A	127.0.0.1		; localhost 
-@	IN A	192.168.0.253	; serveur principal 
+@	IN A	192.168.50.200	        ; serveur principal 
 
 ; adresses IP des serveurs 
 locahost		IN A	127.0.0.1 
-srv-linux-01		IN A	192.168.0.253	 
+srv-linux-01		IN A	192.168.50.200	 
 
 ; adresses IP des machines du reseau 
-PC-01		IN A	192.168.0.101 
-PC-02		IN A	192.168.0.102 
-PC-03		IN A	192.168.0.103 
-PC-04		IN A	192.168.0.104 
-PC-05		IN A	192.168.0.105 
+PC-01		IN A	192.168.50.101 
+PC-02		IN A	192.168.50.102 
+PC-03		IN A	192.168.50.103 
+PC-04		IN A	192.168.50.104 
+PC-05		IN A	192.168.50.105 
 
 ; aliases 
 www 		IN CNAME 	srv-linux-01.cyberlitech.lan. 
