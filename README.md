@@ -25,7 +25,7 @@ Avoir installé au préalable un des OS cité si dessus.
 
 Présentation rapide d’un système DNS
 
-L’architecture de réseau TCP/IP sur lequel est basé Internet et la plupart des réseaux locaux actuels, utilisent des adresses IP numériques du type 192.168.0.1. Mais pour faciliter la lecture de ces adresses par l’homme, un système permet de transformer ces adresses en adresses plus lisibles comme www.linuxfacilepourtous.lan
+L’architecture de réseau TCP/IP sur lequel est basé Internet et la plupart des réseaux locaux actuels, utilisent des adresses IP numériques du type 192.168.0.1. Mais pour faciliter la lecture de ces adresses par l’homme, un système permet de transformer ces adresses en adresses plus lisibles comme www.cyberlitech.lan
 
 Pour effectuer cette opération, il est nécessaire d’utiliser des serveurs DNS. Un serveur DNS fera donc la correspondance entre les adresses IP et les noms des domaines.
 
@@ -44,7 +44,7 @@ La première ligne de ce fichier indique qu’il faut commencer la recherche en 
 La table hosts locale est enregistrée dans le fichier « /etc/hosts » elle contient une table de correspondance entre des adresses IP et des noms, elle ressemble à :
 ```
 127.0.0.1           localhost.localdomain                 localhost 
-192.168.0.253       cybernatus.linuxfacilepourtous.lan    cybernatus 
+192.168.0.253       srv-linux-01.cyberlitech.lan    srv-linux-01 
 ```
 La première ligne est obligatoire pour que le système fonctionne même quand le réseau est désactivé. L’adresse IP 127.0.0.1 est toujours associée au nom localhost.
 
@@ -52,7 +52,7 @@ Les lignes suivantes peuvent être ajoutées manuellement pour faire la correspo
 
 Si le résultat n’est pas trouvé dans la table hosts,le système recherche le serveur DNS indiqué dans le fichier « /etc/resolv.conf» :
 ```
-search linuxfacilepourtous.lan 
+search cyberlitech.lan 
 nameserver 192.168.0.253
 nameserver 194.2.0.50
 ```
@@ -134,10 +134,10 @@ Fichier de Configuration (/etc/bind/named.conf.local)
 // organization 
 //include "/etc/bind/zones.rfc1918"; 
 
-zone "linuxfacilepourtous.lan" { 
+zone "cyberlitech.lan" { 
 	type master; 
 	notify no ; 
-	file "/etc/bind/db.linuxfacilepourtous.lan"; 
+	file "/etc/bind/db.cyberlitech.lan"; 
 // allow-update { key rndc-key; }; 
 allow-update { 192.168.0.253; }; 
 }; 
@@ -145,7 +145,7 @@ allow-update { 192.168.0.253; };
 zone "0.168.192.in-addr.arpa" { 
 	type master; 
 	notify no ; 
-	file "/etc/bind/db.linuxfacilepourtous.lan.reversed"; 
+	file "/etc/bind/db.cyberlitech.lan.reversed"; 
 // allow-update { key rndc-key; }; 
 allow-update { 192.168.0.253; }; 
 }; 
@@ -201,18 +201,18 @@ options {
 	listen-on-v6 { any; }; 
 };
 ```
-Fichier de Configuration (/etc/bind/db.linuxfacilepourtous.lan)
+Fichier de Configuration (/etc/bind/db.cyberlitech.lan)
 ```
-@	IN	SOA	cybernatus.linuxfacilepourtous.lan. postmaster.cybernatus.linuxfacilepourtous.lan. ( 
+@	IN	SOA	srv-linux-01.cyberlitech.lan. postmaster.srv-linux-01.cyberlitech.lan. ( 
 			1999112002 ; numéro de série 
 			28800 ; rafraichissement 
 			14400 ; nouvel essais 
 			604800 ; expiration 
 			86400 ) ; temps de vie minimum 
-@	IN 	NS	cybernatus 
-@	IN	NS	cybernatus.linuxfacilepourtous.lan. 
-@	IN	MX	10 cybernatus 
-@	IN	MX	20 cybernatus.linuxfacilepourtous.lan.	 
+@	IN 	NS	srv-linux-01 
+@	IN	NS	srv-linux-01.cyberlitech.lan. 
+@	IN	MX	10 srv-linux-01 
+@	IN	MX	20 srv-linux-01.cyberlitech.lan.	 
 
 ; serveurs de noms en local 
 @	IN A	127.0.0.1		; localhost 
@@ -220,7 +220,7 @@ Fichier de Configuration (/etc/bind/db.linuxfacilepourtous.lan)
 
 ; adresses IP des serveurs 
 locahost		IN A	127.0.0.1 
-cybernatus		IN A	192.168.0.253	 
+srv-linux-01		IN A	192.168.0.253	 
 
 ; adresses IP des machines du reseau 
 PC-01		IN A	192.168.0.101 
@@ -230,36 +230,36 @@ PC-04		IN A	192.168.0.104
 PC-05		IN A	192.168.0.105 
 
 ; aliases 
-www 		IN CNAME 	cybernatus.linuxfacilepourtous.lan. 
-ssh 		IN CNAME 	cybernatus.linuxfacilepourtous.lan. 
-pop 		IN CNAME 	cybernatus.linuxfacilepourtous.lan. 
-smtp 		IN CNAME 	cybernatus.linuxfacilepourtous.lan. 
-smtps 	IN CNAME 	cybernatus.linuxfacilepourtous.lan. 
-pops 		IN CNAME 	cybernatus.linuxfacilepourtous.lan. 
-imap 		IN CNAME 	cybernatus.linuxfacilepourtous.lan. 
-ftp 		IN CNAME 	cybernatus.linuxfacilepourtous.lan. 
-webmail 	IN CNAME 	cybernatus.linuxfacilepourtous.lan. 
-web 		IN CNAME 	cybernatus.linuxfacilepourtous.lan. 
-stats 	IN CNAME 	cybernatus.linuxfacilepourtous.lan. 
+www 		IN CNAME 	srv-linux-01.cyberlitech.lan. 
+ssh 		IN CNAME 	srv-linux-01.cyberlitech.lan. 
+pop 		IN CNAME 	srv-linux-01.cyberlitech.lan. 
+smtp 		IN CNAME 	srv-linux-01.cyberlitech.lan. 
+smtps 	        IN CNAME 	srv-linux-01.cyberlitech.lan. 
+pops 		IN CNAME 	srv-linux-01.cyberlitech.lan. 
+imap 		IN CNAME 	srv-linux-01.cyberlitech.lan. 
+ftp 		IN CNAME 	srv-linux-01.cyberlitech.lan. 
+webmail 	IN CNAME 	srv-linux-01.cyberlitech.lan. 
+web 		IN CNAME 	srv-linux-01.cyberlitech.lan. 
+stats 	        IN CNAME 	srv-linux-01.cyberlitech.lan. 
 ```
-Fichier de Configuration (/etc/bind/db.linuxfacilepourtous.lan.reversed)
+Fichier de Configuration (/etc/bind/db.cyberlitech.lan.reversed)
 ```
-@	IN	SOA	cybernatus.linuxfacilepourtous.lan. postmaster.cybernatus.linuxfacilepourtous.lan. ( 
+@	IN	SOA	srv-linux-01.cyberlitech.lan. postmaster.srv-linux-01.cyberlitech.lan. ( 
 			1999112002 ; numéro de série 
 			28800 ; rafraichissement 
 			14400 ; nouvel essais 
 			604800 ; expiration 
 			86400 ) ; temps de vie minimum	 
 ; serveurs de noms 
-	IN	NS	cybernatus.linuxfacilepourtous.lan. 
+	IN	NS	srv-linux-01.cyberlitech.lan. 
 
 ; adresses IP inverses 
-253	IN PTR	cybernatus.linuxfacilepourtous.lan.	 
-101	IN PTR	PC-01.linuxfacilepourtous.lan. 
-102	IN PTR	PC-02.linuxfacilepourtous.lan. 
-103	IN PTR	PC-03.linuxfacilepourtous.lan. 
-104	IN PTR	PC-04.linuxfacilepourtous.lan. 
-105	IN PTR	PC-05.linuxfacilepourtous.lan.
+253	IN PTR	srv-linux-01.cyberlitech.lan.	 
+101	IN PTR	PC-01.cyberlitech.lan. 
+102	IN PTR	PC-02.cyberlitech.lan. 
+103	IN PTR	PC-03.cyberlitech.lan. 
+104	IN PTR	PC-04.cyberlitech.lan. 
+105	IN PTR	PC-05.cyberlitech.lan.
 ```
 Fichier de Configuration (/etc/bind/rndc.conf)
 ```
