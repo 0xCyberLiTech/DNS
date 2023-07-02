@@ -25,8 +25,3 @@ Affectation des taches de chaques serveurs :
 
 
 
-
-
-
-# Mise en place d'un serveur DNS (esclave) sur Debian 11 ou Debian 12.
-
