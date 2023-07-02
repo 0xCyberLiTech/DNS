@@ -12,15 +12,17 @@
 <a name="balise_01"></a>
 # - A. Mise en place d'un serveur DNS (maître) sur Debian 11 ou Debian 12.
 
-Schéma de principe
+Schéma de principe pour la réalisation de notre maquette de labo.
 
-- SRV-LINUX-01 - Serveur (Nagios Core + NRPE + Smokeping), 192.168.50.200.
-- SRV-LINUX-02 - Serveur (Test),                           192.168.50.201.
-- SRV-LINUX-03 - serveur (DNS maître),                     192.168.50.203.
+Affectation des taches de chaques serveurs :
+
+- (srv-linux-01) - Serveur (Nagios Core + NRPE + Smokeping),     192.168.50.200.
+- (srv-linux-02) - Serveur (Test),                               192.168.50.201.
+- (srv-linux-03) - serveur (DNS maître),                         192.168.50.203.
 
 ![Apache_logo](./images/schema_nagios.png)
 
-nous allons voir comment mettre en place un serveur DNS maître (primaire) dans une infrastructure locale. 
+Nous allons voir comment mettre en place un serveur DNS maître (primaire) dans une infrastructure locale. 
 Pour assurer la disponibilité de notre serveur maître et également répartir la charge des requêtes DNS, nous mettrons en place un serveur esclave (secondaire). 
 
 Le serveur DNS le plus utilisé dans l’univers GNU/Linux est BIND9 (Berkley Internet Name Domain).
