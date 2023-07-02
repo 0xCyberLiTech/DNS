@@ -1,6 +1,6 @@
 ![Apache_logo](./images/Apache_logo.png)
 
-# - A. LE DNS (Domain Name System) :
+# - A. Server DNS (Domain Name System) :
 
 | Cat | Etapes |
 |------|------|
