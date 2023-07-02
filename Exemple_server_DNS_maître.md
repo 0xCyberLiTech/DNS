@@ -333,111 +333,75 @@ juil. 02 01:08:33 srv-linux-03 named[721]: managed-keys-zone: Key 20326 for zone
 juil. 02 01:08:43 srv-linux-03 named[721]: resolver priming query complete: timed out
 ```
 
-Tout est OK. On test la résolution de nom d’une machine :
-Test nslookup srv-linux-03 :
-```
-nslookup srv-linux-03
+Tout est OK sur notre machine srv-linux-03 (server DNS maître - 192.168.50.203).
+On test la résolution de nom d’une machine :
 
-Server:         127.0.0.1
-Address:        127.0.0.1#53
-
-Name:   srv-linux-03.cyberlitech.lan
-Address: 192.168.50.203
+Ce connecter à la machine srv-linux-01, puis effectuter les test de puis celle-ci :
+Configuration en place sur la machine srv-linux-01.
+Conf /etc/network/hosts.
 ```
-La même avec la commande DIG :
-Test dig srv-linux-03.cyberlitech.lan.
+cat /etc/network/hosts
+127.0.0.1       localhost.localdomain           localhost
+192.168.50.200  srv-linux-01.cyberlitech.lan    sr-linux-01
 ```
-dig srv-linux-03.cyberlitech.lan
-
-; <<>> DiG 9.18.16-1~deb12u1-Debian <<>> srv-linux-03.cyberlitech.lan
-;; global options: +cmd
-;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 25430
-;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
-
-;; OPT PSEUDOSECTION:
-; EDNS: version: 0, flags:; udp: 1232
-; COOKIE: d2ec292ee911b2dc0100000064a0b335bb6584b30e7b73fd (good)
-;; QUESTION SECTION:
-;srv-linux-03.cyberlitech.lan.  IN      A
-
-;; ANSWER SECTION:
-srv-linux-03.cyberlitech.lan. 604800 IN A       192.168.50.203
-
-;; Query time: 0 msec
-;; SERVER: 127.0.0.1#53(127.0.0.1) (UDP)
-;; WHEN: Sun Jul 02 01:13:57 CEST 2023
-;; MSG SIZE  rcvd: 101
+Configuration en place sur la machine srv-linux-01.
+Conf /etc/network/interfaces.
 ```
-Test nslookup 192.168.50.200 :
-```
-nslookup 192.168.50.200
+cat /etc/network/interfaces
 
-200.50.168.192.in-addr.arpa     name = srv-linux-01.cyberlitech.lan.
+# The primary network interface enp0s3
+allow-hotplug enp0s3
+iface enp0s3 inet static
+   address 192.168.50.200/24
+   gateway 192.168.50.1
+   dns-domain cyberlitech.lan
+   dns-nameservers 192.168.50.203
 ```
-Test nslookup srv-linux-01 :
+Configuration en place sur la machine srv-linux-01 (192.168.50.200).
+Conf /etc/resolv.conf.
 ```
-nslookup srv-linux-01
-
-Server:         127.0.0.1
-Address:        127.0.0.1#53
-
-Name:   srv-linux-01.cyberlitech.lan
-Address: 192.168.50.200
+domain cyberlitech.lan
+search cyberlitech.lan
+nameserver 192.168.50.203
 ```
-Test nslookup 192.168.50.201 :
+Test de ping vers 8.8.8.8 depuis la machine srv-linux-01 (192.168.50.200).
 ```
-nslookup 192.168.50.201
-
-201.50.168.192.in-addr.arpa     name = srv-linux-02.cyberlitech.lan.
+ping 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=119 time=19.5 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=119 time=21.1 ms
+64 bytes from 8.8.8.8: icmp_seq=3 ttl=119 time=19.4 ms
 ```
-Test nslookup srv-linux-02 :
+Toujours depuis la machine srv-linux-01 (192.168.50.200).
+Test nslookup srv-linux-02 (192.168.50.201) :
 ```
 nslookup srv-linux-02
-
-Server:         127.0.0.1
-Address:        127.0.0.1#53
+Server:         192.168.50.203
+Address:        192.168.50.203#53
 
 Name:   srv-linux-02.cyberlitech.lan
 Address: 192.168.50.201
 ```
-Test dig -x 192.168.50.200 :
+Toujours depuis la machine srv-linux-01 (192.168.50.200).
+Test nslookup 192.168.50.201 vers la machine srv-linux-02 (192.168.50.201) :
 ```
-dig -x 192.168.50.200
-
-; <<>> DiG 9.18.16-1~deb12u1-Debian <<>> -x 192.168.50.200
-;; global options: +cmd
-;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 43858
-;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
-
-;; OPT PSEUDOSECTION:
-; EDNS: version: 0, flags:; udp: 1232
-; COOKIE: 9e66e8b57522543c0100000064a14a6d1d919fb894edf9b0 (good)
-;; QUESTION SECTION:
-;200.50.168.192.in-addr.arpa.   IN      PTR
-
-;; ANSWER SECTION:
-200.50.168.192.in-addr.arpa. 604800 IN  PTR     srv-linux-01.cyberlitech.lan.
-
-;; Query time: 0 msec
-;; SERVER: 127.0.0.1#53(127.0.0.1) (UDP)
-;; WHEN: Sun Jul 02 11:59:09 CEST 2023
-;; MSG SIZE  rcvd: 126
+nslookup 192.168.50.201
+201.50.168.192.in-addr.arpa     name = srv-linux-02.cyberlitech.lan.
 ```
-Test dig -x 192.168.50.201 :
+Toujours depuis la machine srv-linux-01 (192.168.50.201).
+Test dig -x 192.168.50.201 (srv-linux-02 - 192.168.50.201) :
 ```
-dig -x 192.168.50.201
+ dig -x 192.168.50.201
 
 ; <<>> DiG 9.18.16-1~deb12u1-Debian <<>> -x 192.168.50.201
 ;; global options: +cmd
 ;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 5290
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 42538
 ;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
 
 ;; OPT PSEUDOSECTION:
 ; EDNS: version: 0, flags:; udp: 1232
-; COOKIE: 8f0c7265b37369300100000064a14a8a1742fd4ac3aa4868 (good)
+; COOKIE: 1243d45040e483a40100000064a158a267d640f9ea542732 (good)
 ;; QUESTION SECTION:
 ;201.50.168.192.in-addr.arpa.   IN      PTR
 
@@ -445,21 +409,45 @@ dig -x 192.168.50.201
 201.50.168.192.in-addr.arpa. 604800 IN  PTR     srv-linux-02.cyberlitech.lan.
 
 ;; Query time: 0 msec
-;; SERVER: 127.0.0.1#53(127.0.0.1) (UDP)
-;; WHEN: Sun Jul 02 11:59:38 CEST 2023
+;; SERVER: 192.168.50.203#53(192.168.50.203) (UDP)
+;; WHEN: Sun Jul 02 12:59:46 CEST 2023
 ;; MSG SIZE  rcvd: 126
-
 ```
-Test nslookup free.fr :
+Toujours depuis la machine srv-linux-01 (192.168.50.200).
+Test nslookup free.fr (FAI) :
 ```
 nslookup free.fr
-
-Server:         127.0.0.1
-Address:        127.0.0.1#53
+Server:         192.168.50.203
+Address:        192.168.50.203#53
 
 Non-authoritative answer:
 Name:   free.fr
 Address: 212.27.48.10
 Name:   free.fr
 Address: 2a01:e0c:1::1
+```
+Toujours depuis la machine srv-linux-01 (192.168.50.200).
+Test dig -x free.fr (FAI) :
+```
+dig -x free.fr
+
+; <<>> DiG 9.18.16-1~deb12u1-Debian <<>> -x free.fr
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 13318
+;; flags: qr rd ra ad; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: aa39138fd0fc2fbc0100000064a15b990b85631beede1289 (good)
+;; QUESTION SECTION:
+;fr.free.in-addr.arpa.          IN      PTR
+
+;; AUTHORITY SECTION:
+in-addr.arpa.           709     IN      SOA     b.in-addr-servers.arpa. nstld.iana.org. 2022091606 1800 900 604800 3600
+
+;; Query time: 4 msec
+;; SERVER: 192.168.50.203#53(192.168.50.203) (UDP)
+;; WHEN: Sun Jul 02 13:12:25 CEST 2023
+;; MSG SIZE  rcvd: 161
 ```
