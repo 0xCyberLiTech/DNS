@@ -46,3 +46,4 @@ En clair, le terme serveur DNS de référence désigne un serveur détenant rée
 
 ![dns_record_request_sequence_authoritative_nameserver.png](./images/dns_record_request_sequence_authoritative_nameserver.png)
 
+Source : https://www.cloudflare.com/fr-fr/learning/dns/what-is-dns/
