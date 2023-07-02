@@ -334,18 +334,20 @@ juil. 02 01:08:43 srv-linux-03 named[721]: resolver priming query complete: time
 ```
 
 Tout est OK sur notre machine srv-linux-03 (server DNS maître - 192.168.50.203).
-On test la résolution de nom d’une machine :
 
-Ce connecter à la machine srv-linux-01, puis effectuter les test de puis celle-ci :
-Configuration en place sur la machine srv-linux-01.
-Conf /etc/network/hosts.
+On test la résolution de nom depuis une autre machine :
+
+Par exemple se connecter à la machine srv-linux-01, puis effectuter les test depuis celle-ci vers la machine (srv-linux-02) :
+
+Configuration en place sur la machine srv-linux-01 (192.168.50.200).
+Configuration du fichier/etc/network/hosts.
 ```
 cat /etc/network/hosts
 127.0.0.1       localhost.localdomain           localhost
 192.168.50.200  srv-linux-01.cyberlitech.lan    sr-linux-01
 ```
-Configuration en place sur la machine srv-linux-01.
-Conf /etc/network/interfaces.
+Configuration en place sur la machine srv-linux-01 (192.168.50.200).
+Configuration du fichier /etc/network/interfaces.
 ```
 cat /etc/network/interfaces
 
@@ -358,13 +360,13 @@ iface enp0s3 inet static
    dns-nameservers 192.168.50.203
 ```
 Configuration en place sur la machine srv-linux-01 (192.168.50.200).
-Conf /etc/resolv.conf.
+Configuration du fichier /etc/resolv.conf.
 ```
 domain cyberlitech.lan
 search cyberlitech.lan
 nameserver 192.168.50.203
 ```
-Test de ping vers 8.8.8.8 depuis la machine srv-linux-01 (192.168.50.200).
+Test de ping vers 8.8.8.8 depuis la machine srv-linux-01 (192.168.50.200) .
 ```
 ping 8.8.8.8
 PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
@@ -388,7 +390,7 @@ Test nslookup 192.168.50.201 vers la machine srv-linux-02 (192.168.50.201) :
 nslookup 192.168.50.201
 201.50.168.192.in-addr.arpa     name = srv-linux-02.cyberlitech.lan.
 ```
-Toujours depuis la machine srv-linux-01 (192.168.50.201).
+Toujours depuis la machine srv-linux-01 (192.168.50.200).
 Test dig -x 192.168.50.201 (srv-linux-02 - 192.168.50.201) :
 ```
  dig -x 192.168.50.201
