@@ -1,4 +1,19 @@
 <a name="Exemple_server_DNS_maître.md"></a>
+![Apache_logo](./images/Apache_logo.png)
+
+| Cat | Introduction : |
+|------|------|
+| - A. | [ ](#balise_01) |
+| - B. | [ ](#balise_02) |
+| - C. | [ ](#balise_03) |
+| - D. | [ ](#balise_04) |
+| - E. | [ ](#balise_02) |
+| - F. | [ ](#balise_03) |
+| - G. | [ ](#balise_04) |
+| - H. | [ ](#balise_04) |
+
+
+<a name="Exemple_server_DNS_maître.md"></a>
 # Mise en place d'un serveur DNS (maître) sur Debian 11 ou Debian 12.
 
 nous allons voir comment mettre en place un serveur DNS maître (primaire) dans une infrastructure locale. 
