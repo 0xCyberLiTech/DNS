@@ -346,7 +346,7 @@ Tout est OK sur notre machine srv-linux-03 (server DNS maître - 192.168.50.203)
 
 On test la résolution de nom depuis une autre machine :
 
-Par exemple se connecter à la machine srv-linux-01, puis effectuter les tests depuis celle-ci vers la machine srv-linux-02 (192.168.50.201) :
+Nous allons nous connecter à la machine srv-linux-01, puis effectuter les tests depuis celle-ci vers la machine srv-linux-02 (192.168.50.201) :
 
 Configuration en place sur la machine srv-linux-01 (192.168.50.200).
 
