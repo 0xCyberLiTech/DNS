@@ -105,8 +105,10 @@ Enregistrer : Ctrl+o et entrée. Quitter : Ctrl+x
 
 Enregistrement PTR Slave (pixelabs.rev.zone).
 
-Éditez le fichier de zone /etc/bind/srv-linux-01.rev.zone et ajoutez l’adresse du serveur esclave (reverse) :
+Éditez le fichier de zone /etc/bind/srv-linux-03.rev.zone et ajoutez l’adresse du serveur esclave (reverse) :
 ```
+nano /etc/bind/srv-linux-03.rev.zone
+
 ;
 ; BIND reverse data file for local loopback interface
 ;
@@ -152,7 +154,6 @@ Allez maintenant sur le serveur esclave nsslave.pixelabs.fr et éditez le fichie
 ```
 nano /etc/bind/named.conf.local
 
-```
 //
 // Do any local configuration here
 //
@@ -197,6 +198,8 @@ search cyberlitech.lan
 ```
 Vous devez alors ajouter le domaine et le serveur DNS depuis le fichier /etc/network/interfaces.
 ```
+nano /etc/network/interfaces
+
 # the primary network interface
 allow-hotplug enp0s3
 iface enp0s3 inet static
@@ -207,7 +210,7 @@ iface enp0s3 inet static
 ```
 Vous devez alors ajouter le domaine depuis le fichier /etc/hosts.
 ```
-cat /etc/network/hosts
+nano /etc/network/hosts
 127.0.0.1       localhost.localdomain           localhost
 192.168.50.204  srv-linux-04.cyberlitech.lan    sr-linux-04
 ```
@@ -264,6 +267,8 @@ Exemple pour :
 
 - srv-linux-01
 ```
+cat /etc/network/interfaces
+
 # the primary network interface
 allow-hotplug enp0s3
 iface enp0s3 inet static
@@ -274,6 +279,8 @@ iface enp0s3 inet static
 ```
 - srv-linux-02
 ```
+cat /etc/network/interfaces
+
 # the primary network interface
 allow-hotplug enp0s3
 iface enp0s3 inet static
@@ -286,7 +293,8 @@ Enregistrer : Ctrl+o et entrée. Quitter : Ctrl+x
 
 Si vous être donc en IP statique, il ne faut pas oublier de rajouter les serveurs DNS dans /etc/resolv.conf. Si vous êtes en DHCP, la machine Debian va tout récupérer automatiquement :
 ```
-cat /etc/resolv.conf 
+cat /etc/resolv.conf
+
 domain cyberlitech.lan
 search cyberlitech.lan
 nameserver 192.168.50.203
@@ -307,4 +315,3 @@ Je relance le ping sur le poste client :
 ping cyberlitech.lan -C 2
 ```
 Le serveur maître reprend le relais.
-
