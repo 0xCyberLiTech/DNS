@@ -5,7 +5,7 @@
 
 | Cat | Etapes |
 |------|------|
-| - A. | [README.](#balise_00) |
+| - A. | [Server DNS (Domain Name System)](#balise_00) |
 | - B. | [Exemple_server_DNS_maître.](Exemple_server_DNS_maître.md) |
 | - C. | [Exemple_server_DNS_esclave.](Exemple_server_DNS_esclave.md) |
 
