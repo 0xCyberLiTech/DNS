@@ -14,9 +14,9 @@
 
 Schéma de principe
 
-SRV-LINUX-01 - Serveur (Nagios Core + NRPE + Smokeping), 192.168.50.200.
-SRV-LINUX-02 - Serveur (Test),                           192.168.50.201.
-SRV-LINUX-03 - serveur (DNS maître),                     192.168.50.203.
+- SRV-LINUX-01 - Serveur (Nagios Core + NRPE + Smokeping), 192.168.50.200.
+- SRV-LINUX-02 - Serveur (Test),                           192.168.50.201.
+- SRV-LINUX-03 - serveur (DNS maître),                     192.168.50.203.
 
 ![Apache_logo](./images/schema_nagios.png)
 
