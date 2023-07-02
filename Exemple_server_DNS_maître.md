@@ -80,7 +80,6 @@ options {
         // };
 ```
 Après :
-
 ```
 options {
         directory "/var/cache/bind";
@@ -104,25 +103,20 @@ Enregistrer : Ctrl+o et entrée. Quitter : Ctrl+x
 Mettez vos propres serveurs DNS ou n’importe quel serveur OpenDNS.
 
 Serveur DNS google :
-
- ```
+```
 8.8.8.8
 8.8.4.4
 ```
 Serveur DNS Free
-
 ```
 212.27.40.240
 212.27.40.241
 ```
 Sauvegarder et relancer le service BIND :
-
 ```
 systemctl restart bind9
 ```
-
 On peut effectuer un test à l’aide de la commande DIG en interrogeant le serveur à partir de lui-même :
-
 ```
 dig -x 127.0.0.1
 
@@ -146,9 +140,7 @@ dig -x 127.0.0.1
 ;; WHEN: Sun Jul 02 00:12:13 CEST 2023
 ;; MSG SIZE  rcvd: 102
 ```
-
 Vous pouvez interroger d’autres domaines par exemple le site :
-
 ```
 dig cyberlitech.lan
 
@@ -165,7 +157,6 @@ Nous allons configurer BIND comme un serveur maître sur le même serveur pour l
 Éditez le fichier named.conf.local
 
 Ajoutez les lignes suivante (adapter par rapport à votre conf)
-
 ```
 nano /etc/bind/named.conf.local
 
@@ -184,7 +175,6 @@ zone "50.168.192.in-addr.arpa" {
 Enregistrer : Ctrl+o et entrée. Quitter : Ctrl+x
 
 Nous allons maintenant créer 2 fichiers que nous avons définis ci-dessus :
-
 ```
 /etc/bind/cyberlitech.fw.zone
 /etc/bind/cyberlitech.rev.zone
@@ -214,20 +204,16 @@ srv-linux-03   IN      A         192.168.50.203
 srv-linux-01   IN      A         192.168.50.200
 srv-linux-02   IN      A         192.168.50.201
 ```
-
 Enregistrer : Ctrl+o et entrée. Quitter : Ctrl+x
 
 Vous pouvez rajouter d’autres enregistrements DNS à la suite et n’oubliez pas de rajouter un enregistrement PTR dans la zone inversée (ci-dessous)
 
 Zone Inversée cyberlitech.rev.zone.
 Configuration de la zone inversée :
-
 ```
 cp /etc/bind/db.127 /etc/bind/cyberlitech.rev.zone
 ```
-
 Éditer le fichier et modifier le domaine et l’adresse du serveur :
-
 ```
 nano /etc/bind/cyberlitech.rev.zone
 
@@ -257,7 +243,6 @@ srv-linux-03	IN	A	192.168.50.203
 200	IN	PTR	srv-linux-01.cyberlitech.lan.
 201	IN	PTR	srv-linux-02.cyberlitech.lan.
 ```
-
 Enregistrer : Ctrl+o et entrée. Quitter : Ctrl+x
 
 Remarque :
@@ -281,7 +266,6 @@ nameserver 127.0.0.1
 search cyberlitech.lan
 ```
 Vous devez alors ajouter le domaine et le serveur DNS depuis le fichier /etc/network/interfaces
-
 ```
 # the primary network interface
 allow-hotplug enp0s3
@@ -291,9 +275,7 @@ iface enp0s3 inet static
         dns-domain cyberlitech.lan
         dns-nameservers 127.0.0.1
 ```
-
 Relancez le service réseau :
-
 ```
 systemctl restart networking
 ```
@@ -308,24 +290,21 @@ named-checkconf
 RAS
 
 Tester la zone principal :
-
 ```
 named-checkzone cyberlitech.lan /etc/bind/cyberlitech.fw.zone
 
 zone cyberlitech.lan/IN: loaded serial 20181226
 OK
 ```
-
 Tester aussi, la zone inversée :
-
 ```
 named-checkzone 50.168.192.in-addr.arpa /etc/bind/cyberlitech.rev.zone
 
 zone 50.168.192.in-addr.arpa/IN: loaded serial 20181226
 OK
 ```
-Redémarrez le service Bind :
-
+Redémarrez le service BIND9.
+Vérification de l'état du service BIND9.
 ```
 systemctl restart bind9
 systemctl status bind9
@@ -355,18 +334,18 @@ juil. 02 01:08:43 srv-linux-03 named[721]: resolver priming query complete: time
 ```
 
 Tout est OK. On test la résolution de nom d’une machine :
-
+Test nslookup srv-linux-03 :
 ```
 nslookup srv-linux-03
+
 Server:         127.0.0.1
 Address:        127.0.0.1#53
 
 Name:   srv-linux-03.cyberlitech.lan
 Address: 192.168.50.203
 ```
-
 La même avec la commande DIG :
-
+Test dig srv-linux-03.cyberlitech.lan.
 ```
 dig srv-linux-03.cyberlitech.lan
 
@@ -390,30 +369,39 @@ srv-linux-03.cyberlitech.lan. 604800 IN A       192.168.50.203
 ;; WHEN: Sun Jul 02 01:13:57 CEST 2023
 ;; MSG SIZE  rcvd: 101
 ```
+Test nslookup 192.168.50.200 :
 ```
 nslookup 192.168.50.200
+
 200.50.168.192.in-addr.arpa     name = srv-linux-01.cyberlitech.lan.
 ```
+Test nslookup srv-linux-01 :
 ```
 nslookup srv-linux-01
+
 Server:         127.0.0.1
 Address:        127.0.0.1#53
 
 Name:   srv-linux-01.cyberlitech.lan
 Address: 192.168.50.200
 ```
+Test nslookup 192.168.50.201 :
 ```
 nslookup 192.168.50.201
+
 201.50.168.192.in-addr.arpa     name = srv-linux-02.cyberlitech.lan.
 ```
+Test nslookup srv-linux-02 :
 ```
 nslookup srv-linux-02
+
 Server:         127.0.0.1
 Address:        127.0.0.1#53
 
 Name:   srv-linux-02.cyberlitech.lan
 Address: 192.168.50.201
 ```
+Test dig -x 192.168.50.200 :
 ```
 dig -x 192.168.50.200
 
@@ -437,6 +425,7 @@ dig -x 192.168.50.200
 ;; WHEN: Sun Jul 02 11:59:09 CEST 2023
 ;; MSG SIZE  rcvd: 126
 ```
+Test dig -x 192.168.50.201 :
 ```
 dig -x 192.168.50.201
 
@@ -461,6 +450,7 @@ dig -x 192.168.50.201
 ;; MSG SIZE  rcvd: 126
 
 ```
+Test nslookup free.fr :
 ```
 nslookup free.fr
 
