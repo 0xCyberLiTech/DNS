@@ -332,7 +332,6 @@ juil. 02 01:08:33 srv-linux-03 named[721]: zone cyberlitech.lan/IN: sending noti
 juil. 02 01:08:33 srv-linux-03 named[721]: managed-keys-zone: Key 20326 for zone . is now trusted (acceptance timer complete)
 juil. 02 01:08:43 srv-linux-03 named[721]: resolver priming query complete: timed out
 ```
-
 Tout est OK sur notre machine srv-linux-03 (server DNS maître - 192.168.50.203).
 
 On test la résolution de nom depuis une autre machine :
@@ -340,14 +339,16 @@ On test la résolution de nom depuis une autre machine :
 Par exemple se connecter à la machine srv-linux-01, puis effectuter les tests depuis celle-ci vers la machine srv-linux-02 (192.168.50.201) :
 
 Configuration en place sur la machine srv-linux-01 (192.168.50.200).
-Configuration du fichier /etc/network/hosts.
+
+- Configuration du fichier /etc/network/hosts.
 ```
 cat /etc/network/hosts
 127.0.0.1       localhost.localdomain           localhost
 192.168.50.200  srv-linux-01.cyberlitech.lan    sr-linux-01
 ```
 Configuration en place sur la machine srv-linux-01 (192.168.50.200).
-Configuration du fichier /etc/network/interfaces.
+
+- Configuration du fichier /etc/network/interfaces.
 ```
 cat /etc/network/interfaces
 
@@ -360,13 +361,14 @@ iface enp0s3 inet static
    dns-nameservers 192.168.50.203
 ```
 Configuration en place sur la machine srv-linux-01 (192.168.50.200).
-Configuration du fichier /etc/resolv.conf.
+
+- Configuration du fichier /etc/resolv.conf.
 ```
 domain cyberlitech.lan
 search cyberlitech.lan
 nameserver 192.168.50.203
 ```
-Test de ping vers 8.8.8.8 depuis la machine srv-linux-01 (192.168.50.200) .
+- Test de ping vers 8.8.8.8 depuis la machine srv-linux-01 (192.168.50.200) .
 ```
 ping 8.8.8.8
 PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
@@ -375,7 +377,8 @@ PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
 64 bytes from 8.8.8.8: icmp_seq=3 ttl=119 time=19.4 ms
 ```
 Toujours depuis la machine srv-linux-01 (192.168.50.200).
-Test nslookup srv-linux-02 (192.168.50.201) :
+
+- Test nslookup srv-linux-02 (192.168.50.201) :
 ```
 nslookup srv-linux-02
 Server:         192.168.50.203
@@ -385,13 +388,15 @@ Name:   srv-linux-02.cyberlitech.lan
 Address: 192.168.50.201
 ```
 Toujours depuis la machine srv-linux-01 (192.168.50.200).
-Test nslookup 192.168.50.201 vers la machine srv-linux-02 (192.168.50.201) :
+
+- Test nslookup 192.168.50.201 vers la machine srv-linux-02 (192.168.50.201) :
 ```
 nslookup 192.168.50.201
 201.50.168.192.in-addr.arpa     name = srv-linux-02.cyberlitech.lan.
 ```
 Toujours depuis la machine srv-linux-01 (192.168.50.200).
-Test dig -x 192.168.50.201 (srv-linux-02 - 192.168.50.201) :
+
+- Test dig -x 192.168.50.201 (srv-linux-02 - 192.168.50.201) :
 ```
  dig -x 192.168.50.201
 
@@ -416,7 +421,8 @@ Test dig -x 192.168.50.201 (srv-linux-02 - 192.168.50.201) :
 ;; MSG SIZE  rcvd: 126
 ```
 Toujours depuis la machine srv-linux-01 (192.168.50.200).
-Test nslookup free.fr (FAI) :
+
+- Test nslookup free.fr (FAI) :
 ```
 nslookup free.fr
 Server:         192.168.50.203
@@ -429,7 +435,8 @@ Name:   free.fr
 Address: 2a01:e0c:1::1
 ```
 Toujours depuis la machine srv-linux-01 (192.168.50.200).
-Test dig -x free.fr (FAI) :
+
+- Test dig -x free.fr (FAI) :
 ```
 dig -x free.fr
 
