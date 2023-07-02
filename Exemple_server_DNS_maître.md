@@ -392,15 +392,74 @@ srv-linux-03.cyberlitech.lan. 604800 IN A       192.168.50.203
 ```
 ```
 nslookup 192.168.50.200
+200.50.168.192.in-addr.arpa     name = srv-linux-01.cyberlitech.lan.
+```
+```
+nslookup srv-linux-01
+Server:         127.0.0.1
+Address:        127.0.0.1#53
+
+Name:   srv-linux-01.cyberlitech.lan
+Address: 192.168.50.200
 ```
 ```
 nslookup 192.168.50.201
+201.50.168.192.in-addr.arpa     name = srv-linux-02.cyberlitech.lan.
+```
+```
+nslookup srv-linux-02
+Server:         127.0.0.1
+Address:        127.0.0.1#53
+
+Name:   srv-linux-02.cyberlitech.lan
+Address: 192.168.50.201
 ```
 ```
 dig -x 192.168.50.200
+
+; <<>> DiG 9.18.16-1~deb12u1-Debian <<>> -x 192.168.50.200
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 43858
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: 9e66e8b57522543c0100000064a14a6d1d919fb894edf9b0 (good)
+;; QUESTION SECTION:
+;200.50.168.192.in-addr.arpa.   IN      PTR
+
+;; ANSWER SECTION:
+200.50.168.192.in-addr.arpa. 604800 IN  PTR     srv-linux-01.cyberlitech.lan.
+
+;; Query time: 0 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1) (UDP)
+;; WHEN: Sun Jul 02 11:59:09 CEST 2023
+;; MSG SIZE  rcvd: 126
 ```
 ```
 dig -x 192.168.50.201
+
+; <<>> DiG 9.18.16-1~deb12u1-Debian <<>> -x 192.168.50.201
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 5290
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: 8f0c7265b37369300100000064a14a8a1742fd4ac3aa4868 (good)
+;; QUESTION SECTION:
+;201.50.168.192.in-addr.arpa.   IN      PTR
+
+;; ANSWER SECTION:
+201.50.168.192.in-addr.arpa. 604800 IN  PTR     srv-linux-02.cyberlitech.lan.
+
+;; Query time: 0 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1) (UDP)
+;; WHEN: Sun Jul 02 11:59:38 CEST 2023
+;; MSG SIZE  rcvd: 126
+
 ```
 ```
 nslookup free.fr
