@@ -12,7 +12,7 @@
 | Cat | Introduction : |
 |------|------|
 | - A. | [ Qu'est-ce que le DNS ?](#balise_01) |
-| - B. | [ Comment fonctionne le DNS ?](#balise_01) |
+| - B. | [ Comment fonctionne le DNS ?](#balise_02) |
 | - C. | [ Quatre serveurs DNS sont impliqués dans le chargement d'une page web.](#balise_03) |
 | - D. | [ Quelle est la différence entre un serveur DNS de référence et un résolveur DNS récursif ?](#balise_04) |
 
