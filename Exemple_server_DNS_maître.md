@@ -3,25 +3,21 @@
 
 | Cat | Introduction : |
 |------|------|
-| - A. | [ ](#balise_01) |
-| - B. | [ ](#balise_02) |
-| - C. | [ ](#balise_03) |
-| - D. | [ ](#balise_04) |
-| - E. | [ ](#balise_02) |
-| - F. | [ ](#balise_03) |
-| - G. | [ ](#balise_04) |
-| - H. | [ ](#balise_04) |
+| - A. | [Mise en place d'un serveur DNS (maître).](#balise_01) |
+| - B. | [Configuration serveur cache.](#balise_02) |
+| - C. | [Configuration serveur maître.](#balise_03) |
+| - D. | [Configuration DNS (resolv.conf).](#balise_04) |
+| - E. | [Tests DNS Master.](#balise_05) |
 
-
-<a name="Exemple_server_DNS_maître.md"></a>
-# Mise en place d'un serveur DNS (maître) sur Debian 11 ou Debian 12.
+<a name="balise_01"></a>
+# - A. Mise en place d'un serveur DNS (maître) sur Debian 11 ou Debian 12.
 
 nous allons voir comment mettre en place un serveur DNS maître (primaire) dans une infrastructure locale. 
 Pour assurer la disponibilité de notre serveur maître et également répartir la charge des requêtes DNS, nous mettrons en place un serveur esclave (secondaire). 
 
 Le serveur DNS le plus utilisé dans l’univers GNU/Linux est BIND9 (Berkley Internet Name Domain).
 
-J’installe BIND9 sur la machine srv-linux-03.cyberlitech.lan :
+Installer BIND9 sur la machine srv-linux-03.cyberlitech.lan :
 ```
 apt-get install bind9 bind9-doc resolvconf ufw
 ```
@@ -55,7 +51,8 @@ juil. 02 00:00:12 srv-linux-03 systemd[1]: Started named.service - BIND Domain N
 juil. 02 00:00:22 srv-linux-03 named[1050]: managed-keys-zone: Unable to fetch DNSKEY set '.': timed out
 juil. 02 00:00:22 srv-linux-03 named[1050]: resolver priming query complete: timed out
 ```
-Configuration serveur cache.
+<a name="balise_02"></a>
+## - B. Configuration serveur cache.
 
 Par défaut, BIND est déjà configuré en tant que serveur cache. 
 Il suffit simplement d’ajouter le ou les serveurs DNS de votre FAI (box internet).212.27.40.240  ou 212.27.40.241
@@ -161,8 +158,8 @@ dig cyberlitech.lan
 ;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 62911
 ;; flags: qr rd ra ad; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL:
 ```
-
-Configuration serveur maître.
+<a name="balise_03"></a>
+## - C. Configuration serveur maître.
 Nous allons configurer BIND comme un serveur maître sur le même serveur pour le domaine pixelabs.fr 
 
 Éditez le fichier named.conf.local
@@ -269,7 +266,8 @@ Remarque :
 200 = 192.168.50.200 = srv-linux-01
 201 = 192.168.50.201 = srv-linux-02
 ```
-Configuration DNS (resolv.conf).
+<a name="balise_04"></a>
+## - D. Configuration DNS (resolv.conf).
 Modifier le fichier resolv.conf. Attention : 
 Si ce fichier se met à jour automatiquement (dynamique) par resolvconf, ne pas le modifier manuellement.
 
@@ -299,8 +297,8 @@ Relancez le service réseau :
 ```
 systemctl restart networking
 ```
-
-Tests DNS Master.
+<a name="balise_05"></a>
+## - E. Tests DNS Master.
 Vérifier la bonne configuration avant de démarrer BIND :
 
 On vérifie la configuration :
