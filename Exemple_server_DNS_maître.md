@@ -337,10 +337,10 @@ Tout est OK sur notre machine srv-linux-03 (server DNS maître - 192.168.50.203)
 
 On test la résolution de nom depuis une autre machine :
 
-Par exemple se connecter à la machine srv-linux-01, puis effectuter les test depuis celle-ci vers la machine (srv-linux-02) :
+Par exemple se connecter à la machine srv-linux-01, puis effectuter les tests depuis celle-ci vers la machine (srv-linux-02) :
 
 Configuration en place sur la machine srv-linux-01 (192.168.50.200).
-Configuration du fichier/etc/network/hosts.
+Configuration du fichier /etc/network/hosts.
 ```
 cat /etc/network/hosts
 127.0.0.1       localhost.localdomain           localhost
