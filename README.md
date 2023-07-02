@@ -40,3 +40,9 @@ Le résolveur récursif désigne l'ordinateur qui répond à la requête récurs
 
 ![dns_record_request_sequence_recursive_resolver.png](./images/dns_record_request_sequence_recursive_resolver.png)
 
+Serveur DNS de référence :
+
+En clair, le terme serveur DNS de référence désigne un serveur détenant réellement les enregistrements de ressources DNS et responsable de ces derniers. Situé tout en bas de la chaîne de recherche DNS, ce serveur répond en renvoyant l'enregistrement de la ressource recherchée. Ce faisant, il permet finalement au navigateur web effectuant la requête d'atteindre l'adresse IP nécessaire pour accéder à un site web ou à d'autres ressources web. Un serveur de noms de référence peut satisfaire les requêtes à partir de ses propres données sans avoir à interroger une autre source, car il s'agit de la source unique de vérité pour certains enregistrements DNS.
+
+![dns_record_request_sequence_authoritative_nameserver.png](./images/dns_record_request_sequence_authoritative_nameserver.png)
+
