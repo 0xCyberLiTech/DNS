@@ -1,3 +1,4 @@
+<a name="Exemple_server_DNS_maître.md"></a>
 # Mise en place d'un serveur DNS (maître) sur Debian 11 ou Debian 12.
 
 nous allons voir comment mettre en place un serveur DNS maître (primaire) dans une infrastructure locale. 
