@@ -4,10 +4,10 @@
 | Cat | Introduction : |
 |------|------|
 | - A. | [Mise en place d'un serveur DNS (esclave).](#balise_01) |
-| - B. | [.](#balise_02) |
-| - C. | [.](#balise_03) |
-| - D. | [.](#balise_04) |
-| - E. | [.](#balise_05) |
+| - B. | [Transfert de Zone Master > Slave.](#balise_02) |
+| - C. | [Configuration Serveur Esclave.](#balise_03) |
+| - D. | [Configuration DNS (resolv.conf).](#balise_04) |
+| - E. | [Tests DNS Esclave.](#balise_05) |
 
 <a name="balise_01"></a>
 # - A. Mise en place d'un serveur DNS (esclave) sur Debian 11 ou Debian 12.
@@ -31,16 +31,21 @@ Nous installons BIND9 sur le serveur srv-linux-04.cyberlitech.lan sans configura
 ```
 apt-get install bind9 bind9-doc resolvconf ufw
 ```
-## Transfert de Zone Master > Slave.
+<a name="balise_02"></a>
+## - B. Transfert de Zone Master > Slave.
 
 Nous allons configurer le serveur Maître (srv-linux-03.cyberlitech.lan) pour autoriser le transfert de zone vers le serveur esclave.
 
 Retourner sur le serveur Maître et éditez le fichier /etc/bind/named.conf.local.
+
+Rajouter ces deux lignes suivantes dans la zone cyberlitech.lan et dans la zone inverse cyberlitech.lan.
+```
+notify yes;
+allow-transfer { 192.168.50.204; };
+```
 ```
 nano /etc/bind/named.conf.local
-```
-Ajoutez-y les deux lignes en vert.
-```
+
 //
 // Do any local configuration here
 //
@@ -150,6 +155,7 @@ systemctl restart bind9
 ```
 RAS
 
+<a name="balise_03"></a>
 ## Configuration Serveur Esclave.
 
 Nous allons maintenant configurer le serveur esclave pour qu’il puisse récupérer les zones du serveur maître.
@@ -185,14 +191,14 @@ Relancer le service bind9 :
 systemctl restart bind9
 ```
 RAS
-
+<a name="balise_04"></a>
 ## Configuration DNS (resolv.conf).
 
 Configuration DNS (resolv.conf).
 
 Comme avec le serveur maître, modifier le fichier resolv.conf. Attention : si ce fichier se met à jour automatiquement (dynamique) par resolvconf, ne pas le modifier manuellement. C’est le cas également sur le serveur esclave:
 
-srv-linux-03 - Serveur maître DNS
+srv-linux-03 - Serveur maître DNS - 192.168.50.203.
 
 ```
 cat /etc/resolv.conf
@@ -205,7 +211,7 @@ cat /etc/resolv.conf
 nameserver 127.0.0.1
 search cyberlitech.lan
 ```
-srv-linux-04 - Serveur esclave DNS
+srv-linux-04 - Serveur esclave DNS - 192.168.50.204.
 ```
 cat /etc/resolv.conf
 
@@ -217,7 +223,6 @@ cat /etc/resolv.conf
 nameserver 192.168.50.203
 search cyberlitech.lan
 ```
-
 Vous devez alors ajouter le domaine et le serveur DNS depuis le fichier /etc/network/interfaces.
 ```
 nano /etc/network/interfaces
@@ -246,19 +251,37 @@ Relancez le service réseau :
 ```
 systemctl restart networking
 ```
-Tests DNS Esclave.
+<a name="balise_05"></a>
+## Tests DNS Esclave.
 
-On peut vérifier de la même manière que sur le serveur maître :
+On peut vérifier de la même manière que sur le serveur esclave :
 ```
 hostname
+srv-linux-04
 ```
+Test (nslookup srv-linux-01) depuis le serveur srv-linux-04.
 ```
 nslookup srv-linux-01
+
+nslookup srv-linux-01
+Server:         192.168.50.203
+Address:        192.168.50.203#53
+
+Name:   srv-linux-01.cyberlitech.lan
+Address: 192.168.50.200
 ```
-On test le reverse :
+Toujours depuis le serveur srv-linux-04 on test le reverse, nslookup 192.168.50.200.
 ```
 nslookup 192.168.50.200
+
+nslookup srv-linux-01
+Server:         192.168.50.203
+Address:        192.168.50.203#53
+
+Name:   srv-linux-01.cyberlitech.lan
+Address: 192.168.50.200
 ```
+Toujours depuis le serveur srv-linux-04 on test dig -x 192.168.50.200.
 ```
 dig -x 192.168.50.200
 ```
@@ -315,9 +338,8 @@ iface enp0s3 inet static
         dns-domain cyberlitech.lan
         dns-nameservers 192.168.50.203 192.168.50.204
 ```
-Enregistrer : Ctrl+o et entrée. Quitter : Ctrl+x
-
-Si vous être donc en IP statique, il ne faut pas oublier de rajouter les serveurs DNS dans /etc/resolv.conf. Si vous êtes en DHCP, la machine Debian va tout récupérer automatiquement :
+- Si vous être donc en IP statique, il ne faut pas oublier de rajouter les serveurs DNS dans /etc/resolv.conf. 
+- Si vous êtes en DHCP, la machine Debian va tout récupérer automatiquement :
 ```
 cat /etc/resolv.conf
 
