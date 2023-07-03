@@ -84,7 +84,7 @@ nano /etc/bind/cyberlitech.fw.zone
 ;
 ; BIND data file for local loopback interface
 ;
-$TTL    604800
+$TTL             604800
 @                IN      SOA     srv-linux-03.cyberlitech.lan. root.cyberlitech.lan. (
                                    20181226         ; Serial
                                      604800         ; Refresh
@@ -121,7 +121,7 @@ nano /etc/bind/cyberlitech.rev.zone
 ;
 ; BIND reverse data file for local loopback interface
 ;
-$TTL          604800
+$TTL            604800
 @               IN     SOA      srv-linux-03.cyberlitech.lan. root.cyberlitech.lan. (
                                   20181226      ; Serial
                                     604800      ; Refresh
