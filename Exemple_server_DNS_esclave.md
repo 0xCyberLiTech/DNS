@@ -77,29 +77,29 @@ Finissons la configuration sur le serveur maître avant de passer au serveur esc
 ; BIND data file for local loopback interface
 ;
 $TTL            604800
-@               IN      SOA                      srv-linux-03.cyberlitech.lan. root.cyberlitech.lan. (
-                                    20181226         ; Serial
-                                      604800         ; Refresh
-                                        8640         ; Retry
-                                      241920         ; Expire
-                                      604800 )       ; Negative Cache TTL
+@               		IN      	SOA     srv-linux-03.cyberlitech.lan. root.cyberlitech.lan. (
+                                    		      20181226         ; Serial
+                                      			604800         ; Refresh
+                                        		  8640         ; Retry
+                                      			241920         ; Expire
+                                      			604800 )       ; Negative Cache TTL
 
 ; Serveur DNS
 
-@	                      IN        NS   srv-linux-03.cyberlitech.lan.
-@	                      IN	      NS	 srv_linux-04.cyberlitech.lan.
-@	                      IN	      A	   192.168.50.203
-@	                      IN	      A	   192.168.50.204
+@	                      	IN        	NS   	srv-linux-03.cyberlitech.lan.
+@	                      	IN	      	NS	srv_linux-04.cyberlitech.lan.
+@	                      	IN	      	A	192.168.50.203
+@	                      	IN		A	192.168.50.204
 
 ; Resolve DNS
 
-srv-linux-03            IN	      A	   192.168.50.203
-srv-linux-04            IN	      A	   192.168.50.204
+srv-linux-03            	IN	     	A	192.168.50.203
+srv-linux-04            	IN	      	A	192.168.50.204
 
 ; Machine du domaine
 
-srv-linux-01            IN        A    192.168.50.200
-srv-linux-02            IN	      A	   192.168.50.201
+srv-linux-01            	IN        	A	192.168.50.200
+srv-linux-02            	IN		A	192.168.50.201
 ```
 Enregistrer : Ctrl+o et entrée. Quitter : Ctrl+x
 
