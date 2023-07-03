@@ -326,6 +326,20 @@ iface enp0s3 inet static
         dns-domain cyberlitech.lan
         dns-nameservers 192.168.50.203 192.168.50.204
 ```
+```
+nano /etc/network/hosts
+
+127.0.0.1       localhost.localdomain           localhost
+192.168.50.200  srv-linux-01.cyberlitech.lan    sr-linux-01
+```
+```
+nano /etc/resolv/conf
+
+domain cyberlitech.lan
+search cyberlitech.lan
+nameserver 192.168.50.203
+nameserver 192.168.50.204
+```
 - srv-linux-02
 ```
 cat /etc/network/interfaces
@@ -338,16 +352,23 @@ iface enp0s3 inet static
         dns-domain cyberlitech.lan
         dns-nameservers 192.168.50.203 192.168.50.204
 ```
-- Si vous être donc en IP statique, il ne faut pas oublier de rajouter les serveurs DNS dans /etc/resolv.conf. 
-- Si vous êtes en DHCP, la machine Debian va tout récupérer automatiquement :
 ```
-cat /etc/resolv.conf
+nano /etc/network/hosts
+
+127.0.0.1       localhost.localdomain           localhost
+192.168.50.201  srv-linux-02.cyberlitech.lan    sr-linux-02
+```
+```
+nano /etc/resolv/conf
 
 domain cyberlitech.lan
 search cyberlitech.lan
 nameserver 192.168.50.203
 nameserver 192.168.50.204
 ```
+- Si vous être donc en IP statique, il ne faut pas oublier de rajouter les serveurs DNS dans /etc/resolv.conf. 
+- Si vous êtes en DHCP, la machine Debian va tout récupérer automatiquement :
+
 Allez, je ping le domaine cyberlitech.lan
 ```
 ping cyberlitech.lan -c 2
