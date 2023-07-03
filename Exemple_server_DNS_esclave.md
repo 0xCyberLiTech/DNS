@@ -86,10 +86,10 @@ $TTL            604800
 
 ; Serveur DNS
 
-@	             IN             NS      srv-linux-03.cyberlitech.lan.
-@	             IN	      NS	   srv_linux-04.cyberlitech.lan.
-@	             IN	      A	   192.168.50.203
-@	             IN	      A	   192.168.50.204
+@	                      IN        NS   srv-linux-03.cyberlitech.lan.
+@	                      IN	      NS	 srv_linux-04.cyberlitech.lan.
+@	                      IN	      A	   192.168.50.203
+@	                      IN	      A	   192.168.50.204
 
 ; Resolve DNS
 
@@ -98,7 +98,7 @@ srv-linux-04            IN	      A	   192.168.50.204
 
 ; Machine du domaine
 
-srv-linux-01            IN             A       192.168.50.200
+srv-linux-01            IN        A    192.168.50.200
 srv-linux-02            IN	      A	   192.168.50.201
 ```
 Enregistrer : Ctrl+o et entrée. Quitter : Ctrl+x
@@ -112,31 +112,31 @@ nano /etc/bind/srv-linux-03.rev.zone
 ;
 ; BIND reverse data file for local loopback interface
 ;
-$TTL	604800
-@	IN	SOA	           srv-linux-03.cyberlitech.lan. root.cyberlitech.lan. (
-      20181226	                      ; Serial
-        604800	                      ; Refresh
-         86400	                      ; Retry
-       2419200	                      ; Expire
-        604800 )	                      ; Negative Cache TTL
+$TTL	          604800
+@	                IN	  SOA	                          srv-linux-03.cyberlitech.lan. root.cyberlitech.lan. (
+                          20181226	                   ; Serial
+                            604800	                   ; Refresh
+                             86400	                   ; Retry
+                           2419200	                   ; Expire
+                            604800 )	                 ; Negative Cache TTL
 
 ; Serveur DNS
 
-@	           IN	NS	srv-linux-03.cyberlitech.lan.
-@	           IN	NS	srv-linux-04.cyberlitech.lan.
-@	           IN	PTR	cyberlitech.lan.
+@	                IN	  NS	                          srv-linux-03.cyberlitech.lan.
+@	                IN	  NS	                          srv-linux-04.cyberlitech.lan.
+@	                IN	  PTR	                          cyberlitech.lan.
 
 ; Resolve DNS
 
-srv-linux-03	IN	A	192.168.50.203
-srv-linux-04	IN	A	192.168.50.204
+srv-linux-03	    IN	  A	                            192.168.50.203
+srv-linux-04	    IN	  A	                            192.168.50.204
 
 ; Machine du domaine
 
-203	           IN	PTR	srv-linux-03.cyberlitech.lan.
-204	           IN	PTR	srv-linux-04.cyberlitech.lan.
-200	           IN	PTR	srv-linux-01.cyberlitech.lan.
-201	           IN	PTR	srv-linux-02.cyberlitech.lan.
+203	              IN	  PTR	                          srv-linux-03.cyberlitech.lan.
+204	              IN	  PTR	                          srv-linux-04.cyberlitech.lan.
+200	              IN	  PTR	                          srv-linux-01.cyberlitech.lan.
+201	              IN	  PTR	                          srv-linux-02.cyberlitech.lan.
 ```
 Enregistrer : Ctrl+o et entrée. Quitter : Ctrl+x
 
