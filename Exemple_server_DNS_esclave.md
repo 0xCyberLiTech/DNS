@@ -73,6 +73,8 @@ Finissons la configuration sur le serveur maître avant de passer au serveur esc
 
 Éditez le fichier de zone /etc/bind/cyberlitech.fw.zone et ajoutez l’adresse du serveur esclave :
 ```
+nano /etc/bind/cyberlitech.fw.zone
+
 ;
 ; BIND data file for local loopback interface
 ;
