@@ -107,9 +107,9 @@ Enregistrer : Ctrl+o et entrée. Quitter : Ctrl+x
 
 Enregistrement PTR Slave (pixelabs.rev.zone).
 
-Éditez le fichier de zone /etc/bind/srv-linux-03.rev.zone et ajoutez l’adresse du serveur esclave (reverse) :
+Éditez le fichier de zone /etc/bind/cyberlitech.rev.zone et ajoutez l’adresse du serveur esclave (reverse) :
 ```
-nano /etc/bind/srv-linux-03.rev.zone
+nano /etc/bind/cyberlitech.rev.zone
 
 ;
 ; BIND reverse data file for local loopback interface
