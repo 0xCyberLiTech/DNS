@@ -109,15 +109,16 @@ Enregistrement PTR Slave (pixelabs.rev.zone).
 ```
 nano /etc/bind/srv-linux-03.rev.zone
 
+;
 ; BIND reverse data file for local loopback interface
 ;
 $TTL	          604800
 @	                IN	        SOA	                          srv-linux-03.cyberlitech.lan. root.cyberlitech.lan. (
-                                                              20181226	                   ; Serial
-                                                                604800	                   ; Refresh
+                                                               20181226	                   ; Serial
+                                                                 604800	                   ; Refresh
                                                                   86400	                   ; Retry
                                                                 2419200	                   ; Expire
-                                                                604800 )	                 ; Negative Cache TTL
+                                                                604800 )	           ; Negative Cache TTL
 
 ; Serveur DNS
 
@@ -127,8 +128,8 @@ $TTL	          604800
 
 ; Resolve DNS
 
-srv-linux-03	    IN	        A	                            192.168.50.203
-srv-linux-04	    IN	        A	                            192.168.50.204
+srv-linux-03	    	IN	        A	                          192.168.50.203
+srv-linux-04	    	IN	        A	                          192.168.50.204
 
 ; Machine du domaine
 
