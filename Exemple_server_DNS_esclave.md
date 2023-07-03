@@ -156,7 +156,7 @@ systemctl restart bind9
 RAS
 
 <a name="balise_03"></a>
-## Configuration Serveur Esclave.
+## - C. Configuration Serveur Esclave.
 
 Nous allons maintenant configurer le serveur esclave pour qu’il puisse récupérer les zones du serveur maître.
 
@@ -192,7 +192,7 @@ systemctl restart bind9
 ```
 RAS
 <a name="balise_04"></a>
-## Configuration DNS (resolv.conf).
+## - D. Configuration DNS (resolv.conf).
 
 Configuration DNS (resolv.conf).
 
@@ -252,7 +252,7 @@ Relancez le service réseau :
 systemctl restart networking
 ```
 <a name="balise_05"></a>
-## Tests DNS Esclave.
+## - E. Tests DNS Esclave.
 
 On peut vérifier de la même manière que sur le serveur esclave :
 ```
