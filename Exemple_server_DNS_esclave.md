@@ -112,7 +112,7 @@ srv-linux-02     IN      A       192.168.50.201
 ```
 Enregistrer : Ctrl+o et entrée. Quitter : Ctrl+x
 
-Enregistrement PTR Slave (pixelabs.rev.zone).
+Enregistrement PTR Slave (cyberlitech.rev.zone).
 
 Éditez le fichier de zone /etc/bind/cyberlitech.rev.zone et ajoutez l’adresse du serveur esclave (reverse) :
 ```
