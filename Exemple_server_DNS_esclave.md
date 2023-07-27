@@ -12,7 +12,7 @@
 - 05 - [Tests DNS Esclave.](#balise_05)
 
 <a name="balise_01"></a>
-## Mise en place d'un serveur DNS (esclave) sur Debian 11 ou Debian 12.
+## - 01 Mise en place d'un serveur DNS (esclave) sur Debian 11 ou Debian 12.
 
 Schéma de principe pour la réalisation de notre maquette de labo.
 
@@ -25,7 +25,7 @@ Affectation des taches de chaques serveurs :
 
 ![Apache_logo](./images/schema_nagios_01.png)
 
-## DNS serveur slave (Esclave).
+DNS serveur slave (Esclave).
 
 Maintenant que nous avons configuré un serveur maître, nous allons configurer un serveur esclave  pour assurer une disponibilité du service en cas de panne du serveur maître.
 
@@ -34,7 +34,7 @@ Nous installons BIND9 sur le serveur srv-linux-04.cyberlitech.lan sans configura
 apt-get install bind9 bind9-doc resolvconf ufw
 ```
 <a name="balise_02"></a>
-## - B. Transfert de Zone Master > Slave.
+## - 02 Transfert de Zone Master > Slave.
 
 Nous allons configurer le serveur Maître (srv-linux-03.cyberlitech.lan) pour autoriser le transfert de zone vers le serveur esclave.
 
@@ -158,7 +158,7 @@ systemctl restart bind9
 RAS
 
 <a name="balise_03"></a>
-## - C. Configuration Serveur Esclave.
+## - 03 Configuration Serveur Esclave.
 
 Nous allons maintenant configurer le serveur esclave pour qu’il puisse récupérer les zones du serveur maître.
 
@@ -194,7 +194,7 @@ systemctl restart bind9
 ```
 RAS
 <a name="balise_04"></a>
-## - D. Configuration DNS (resolv.conf).
+## - 04 Configuration DNS (resolv.conf).
 
 Configuration DNS (resolv.conf).
 
@@ -254,7 +254,7 @@ Relancez le service réseau :
 systemctl restart networking
 ```
 <a name="balise_05"></a>
-## - E. Tests DNS Esclave.
+## - 05 Tests DNS Esclave.
 
 On peut vérifier de la même manière que sur le serveur esclave :
 ```
