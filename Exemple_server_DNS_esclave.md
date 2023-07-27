@@ -1,16 +1,14 @@
-<a name="Exemple_server_DNS_esclave.md"></a>
+
 ![Apache_logo](./images/Apache_logo.png)
 
-| Cat | Introduction : |
-|------|------|
-| - A. | [Mise en place d'un serveur DNS (esclave).](#balise_01) |
-| - B. | [Transfert de Zone Master > Slave.](#balise_02) |
-| - C. | [Configuration Serveur Esclave.](#balise_03) |
-| - D. | [Configuration DNS (resolv.conf).](#balise_04) |
-| - E. | [Tests DNS Esclave.](#balise_05) |
+- 01 - [Mise en place d'un serveur DNS (esclave).](#balise_01)
+- 02 - [Transfert de Zone Master > Slave.](#balise_02)
+- 03 - [Configuration Serveur Esclave.](#balise_03)
+- 04 - [Configuration DNS (resolv.conf).](#balise_04)
+- 05 - [Tests DNS Esclave.](#balise_05)
 
 <a name="balise_01"></a>
-# - A. Mise en place d'un serveur DNS (esclave) sur Debian 11 ou Debian 12.
+## Mise en place d'un serveur DNS (esclave) sur Debian 11 ou Debian 12.
 
 Schéma de principe pour la réalisation de notre maquette de labo.
 
