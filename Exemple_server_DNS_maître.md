@@ -1,5 +1,6 @@
-<a name="Exemple_server_DNS_maître.md"></a>
 ![Apache_logo](./images/Apache_logo.png)
+
+# Exemple server DNS maître.
 
 👋 Sommaire des sujets abordés :
 
