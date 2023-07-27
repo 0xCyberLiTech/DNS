@@ -8,7 +8,6 @@
 - 01 - [Server DNS (Domain Name System)](#balise_00)
 - 02 - [Exemple_server_DNS_maître.](Exemple_server_DNS_maître.md)
 - 03 - [Exemple_server_DNS_esclave.](Exemple_server_DNS_esclave.md)
-
 - 04 - [ Qu'est-ce que le DNS ?](#balise_01)
 - 05 - [ Comment fonctionne le DNS ?](#balise_02)
 - 06 - [ Quatre serveurs DNS sont impliqués dans le chargement d'une page web.](#balise_03)
