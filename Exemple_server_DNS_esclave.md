@@ -25,7 +25,7 @@ Affectation des taches de chaques serveurs :
 
 ![Apache_logo](./images/schema_nagios_01.png)
 
-# DNS serveur slave (Esclave).
+## DNS serveur slave (Esclave).
 
 Maintenant que nous avons configuré un serveur maître, nous allons configurer un serveur esclave  pour assurer une disponibilité du service en cas de panne du serveur maître.
 
