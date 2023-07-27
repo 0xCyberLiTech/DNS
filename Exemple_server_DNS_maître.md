@@ -1,6 +1,7 @@
 <a name="Exemple_server_DNS_maître.md"></a>
 ![Apache_logo](./images/Apache_logo.png)
 
+👋 Sommaire des sujets abordés :
 
 - 01 - [Mise en place d'un serveur DNS (maître).](#balise_01)
 - 02 - [Configuration serveur cache.](#balise_02)
@@ -9,7 +10,7 @@
 - 05 - [Tests DNS Master.](#balise_05)
 
 <a name="balise_01"></a>
-# - A. Mise en place d'un serveur DNS (maître) sur Debian 11 ou Debian 12.
+# - 01 Mise en place d'un serveur DNS (maître) sur Debian 11 ou Debian 12.
 
 Schéma de principe pour la réalisation de notre maquette de labo.
 
@@ -61,7 +62,7 @@ juil. 02 00:00:22 srv-linux-03 named[1050]: managed-keys-zone: Unable to fetch D
 juil. 02 00:00:22 srv-linux-03 named[1050]: resolver priming query complete: timed out
 ```
 <a name="balise_02"></a>
-## - B. Configuration serveur cache.
+## - 02 Configuration serveur cache.
 
 Par défaut, BIND est déjà configuré en tant que serveur cache. 
 Il suffit simplement d’ajouter le ou les serveurs DNS de votre FAI (box internet).212.27.40.240  ou 212.27.40.241
@@ -160,7 +161,7 @@ dig cyberlitech.lan
 ;; flags: qr rd ra ad; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL:
 ```
 <a name="balise_03"></a>
-## - C. Configuration serveur maître.
+## - 03 Configuration serveur maître.
 Nous allons configurer BIND comme un serveur maître sur le même serveur pour le domaine pixelabs.fr 
 
 Éditez le fichier named.conf.local
@@ -261,7 +262,7 @@ Remarque :
 201 = 192.168.50.201 = srv-linux-02
 ```
 <a name="balise_04"></a>
-## - D. Configuration DNS (resolv.conf).
+## - 04 Configuration DNS (resolv.conf).
 Modifier le fichier resolv.conf. Attention : 
 Si ce fichier se met à jour automatiquement (dynamique) par resolvconf, ne pas le modifier manuellement.
 
@@ -289,7 +290,7 @@ Relancez le service réseau :
 systemctl restart networking
 ```
 <a name="balise_05"></a>
-## - E. Tests DNS Master.
+## - 05 Tests DNS Master.
 Vérifier la bonne configuration avant de démarrer BIND :
 
 On vérifie la configuration :
