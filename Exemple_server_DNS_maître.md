@@ -11,7 +11,7 @@
 - 05 - [Tests DNS Master.](#balise_05)
 
 <a name="balise_01"></a>
-## - 01 Mise en place d'un serveur DNS (maître) sur Debian 11 ou Debian 12.
+## - 01 Mise en place d'un serveur DNS (maître).
 
 Schéma de principe pour la réalisation de notre maquette de labo.
 
