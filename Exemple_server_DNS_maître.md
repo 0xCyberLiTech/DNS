@@ -1,13 +1,12 @@
 <a name="Exemple_server_DNS_maître.md"></a>
 ![Apache_logo](./images/Apache_logo.png)
 
-| Cat | Introduction : |
-|------|------|
-| - A. | [Mise en place d'un serveur DNS (maître).](#balise_01) |
-| - B. | [Configuration serveur cache.](#balise_02) |
-| - C. | [Configuration serveur maître.](#balise_03) |
-| - D. | [Configuration DNS (resolv.conf).](#balise_04) |
-| - E. | [Tests DNS Master.](#balise_05) |
+
+- 01 - [Mise en place d'un serveur DNS (maître).](#balise_01)
+- 02 - [Configuration serveur cache.](#balise_02)
+- 03 - [Configuration serveur maître.](#balise_03)
+- 04 - [Configuration DNS (resolv.conf).](#balise_04)
+- 05 - [Tests DNS Master.](#balise_05)
 
 <a name="balise_01"></a>
 # - A. Mise en place d'un serveur DNS (maître) sur Debian 11 ou Debian 12.
