@@ -1,13 +1,12 @@
 <a name="balise_00"></a>
 ![Apache_logo](./images/Apache_logo.png)
 
-# - A. Server DNS (Domain Name System) :
+# Server DNS (Domain Name System) :
 
-| Cat | Etapes |
-|------|------|
-| - A. | [Server DNS (Domain Name System)](#balise_00) |
-| - B. | [Exemple_server_DNS_maître.](Exemple_server_DNS_maître.md) |
-| - C. | [Exemple_server_DNS_esclave.](Exemple_server_DNS_esclave.md) |
+
+- 01 - [Server DNS (Domain Name System)](#balise_00)
+- 02 - [Exemple_server_DNS_maître.](Exemple_server_DNS_maître.md)
+- 03 - [Exemple_server_DNS_esclave.](Exemple_server_DNS_esclave.md)
 
 | Cat | Introduction : |
 |------|------|
