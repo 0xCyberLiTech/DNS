@@ -29,6 +29,14 @@
 
 ---
 
+### 🎯 **Objectif de ce dépôt.**
+
+> Ce dépôt a pour vocation de centraliser un ensemble de notions clés autour du DNS (Domain Name System). Il s’adresse aux passionnés, étudiants et professionnels souhaitant mieux comprendre le fonctionnement de
+> ce système fondamental de l'Internet, apprendre à configurer et dépanner les serveurs DNS, et se familiariser avec les concepts et outils essentiels pour garantir la résolution de noms et la disponibilité de
+> leurs services en ligne.
+
+---
+
 ### 🧭 **Sommaire :**
 
 | Chapitre | Description | Accès Rapide |
