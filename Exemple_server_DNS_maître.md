@@ -1,5 +1,3 @@
-![Apache_logo](./images/Apache_logo.png)
-
 ## Exemple server DNS maître.
 
 👋 Sommaire des sujets abordés :
