@@ -33,22 +33,6 @@
 
 👋 Sommaire des sujets abordés :
 
-- 01 - [ Qu'est-ce que le DNS ?](#balise_01)
-- 02 - [ Comment fonctionne le DNS ?](#balise_02)
-- 03 - [ Quatre serveurs DNS sont impliqués dans le chargement d'une page web.](#balise_03)
-- 04 - [ Quelle est la différence entre un serveur DNS de référence et un résolveur DNS récursif ?](#balise_04)
-- 05 - [Exemple_server_DNS_maître.](Exemple_server_DNS_maître.md)
-- 06 - [Exemple_server_DNS_esclave.](Exemple_server_DNS_esclave.md)
-
-| Chapitre | Description | Accès Rapide |
-|:---:|:---|:---:|
-| **01** | Qu'est-ce que le DNS ? | [<img src="https://img.shields.io/badge/LIRE-blue?style=for-the-badge&logo=book&logoColor=white">](#balise_01) |
-| **02** | Comment fonctionne le DNS ? | [<img src="https://img.shields.io/badge/LIRE-blue?style=for-the-badge&logo=book&logoColor=white">](#balise_02) |
-| **03** | Les 4 types de serveurs DNS impliqués dans une requête. | [<img src="https://img.shields.io/badge/LIRE-blue?style=for-the-badge&logo=book&logoColor=white">](#balise_03) |
-| **04** | Différence entre DNS de référence et résolveur récursif. | [<img src="https://img.shields.io/badge/LIRE-blue?style=for-the-badge&logo=book&logoColor=white">](#balise_04) |
-| **05** | Exemple de configuration d'un serveur DNS Maître. | [<img src="https://img.shields.io/badge/EXPLORER-brightgreen?style=for-the-badge&logo=github&logoColor=white">](Exemple_server_DNS_maître.md) |
-| **06** | Exemple de configuration d'un serveur DNS Esclave. | [<img src="https://img.shields.io/badge/EXPLORER-brightgreen?style=for-the-badge&logo=github&logoColor=white">](Exemple_server_DNS_esclave.md) |
-
 | Chapitre | Description | Accès Rapide |
 |:---:|:---|:---:|
 | **01** | Qu'est-ce que le DNS ? | [<img src="https://img.shields.io/badge/EXPLORER-brightgreen?style=for-the-badge&logo=github&logoColor=white">](#balise_01) |
