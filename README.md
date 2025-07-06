@@ -29,9 +29,6 @@
 
 ---
 
-<a name="balise_00"></a>
-![Apache_logo](./images/Apache_logo.png)
-
 ## Server DNS (Domain Name System).
 
 👋 Sommaire des sujets abordés :
