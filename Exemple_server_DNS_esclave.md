@@ -1,6 +1,3 @@
-![Apache_logo](./images/Apache_logo.png)
-
-
 ## Exemple server DNS esclave.
 
 👋 Sommaire des sujets abordés :
