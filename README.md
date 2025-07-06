@@ -29,9 +29,7 @@
 
 ---
 
-## Server DNS (Domain Name System).
-
-👋 Sommaire des sujets abordés :
+### 🧭 **Sommaire :**
 
 | Chapitre | Description | Accès Rapide |
 |:---:|:---|:---:|
