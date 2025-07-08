@@ -36,7 +36,25 @@
 
 ---
 
-### 🧭 **Sommaire :**
+### 🚀 **Sommaire :**
+
+---
+
+<div align="center" style="margin-bottom: 10px;">
+
+Légende des couleurs des boutons :
+
+🟢 **Actif** – Dépôt totalement accessible  
+🟠 **Partiel** – Dépôt partiellement accessible  
+🔴 **Inactif** – Dépôt inaccessible ou indisponible
+
+</div>
+
+---
+
+<div align="center">
+
+**Catégories des projets :**
 
 | Chapitre | Description | Accès Rapide |
 |:---:|:---|:---:|
@@ -46,6 +64,8 @@
 | **04** | Différence entre DNS de référence et résolveur récursif. | [<img src="https://img.shields.io/badge/EXPLORER-brightgreen?style=for-the-badge&logo=github&logoColor=white">](#balise_04) |
 | **05** | Exemple de configuration d'un serveur DNS Maître. | [<img src="https://img.shields.io/badge/EXPLORER-brightgreen?style=for-the-badge&logo=github&logoColor=white">](Exemple_server_DNS_maître.md) |
 | **06** | Exemple de configuration d'un serveur DNS Esclave. | [<img src="https://img.shields.io/badge/EXPLORER-brightgreen?style=for-the-badge&logo=github&logoColor=white">](Exemple_server_DNS_esclave.md) |
+
+</div>
 
 <a name="balise_01"></a>
 ## Qu'est-ce que le DNS ?
