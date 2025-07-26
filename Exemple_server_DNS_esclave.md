@@ -428,3 +428,13 @@ Je relance le ping sur le poste client :
 ping cyberlitech.lan -C 2
 ```
 Le serveur maître reprend le relais.
+
+---
+
+**Mise à jour :** Juillet 2025
+
+---
+
+<p align="center">
+  <b>🔒 Un guide proposé par <a href="https://github.com/0xCyberLiTech">0xCyberLiTech</a> • Pour des tutoriels accessibles à tous. 🔒</b>
+</p>
