@@ -127,3 +127,26 @@ Source : https://www.cloudflare.com/fr-fr/learning/dns/what-is-dns/
 <p align="center">
   <b>🔒 Un guide proposé par <a href="https://github.com/0xCyberLiTech">0xCyberLiTech</a> • Pour des tutoriels accessibles à tous. 🔒</b>
 </p>
+
+<footer style="
+  background-color: #0d1117;
+  color: #c9d1d9;
+  font-family: 'Share Tech Mono', monospace;
+  text-align: center;
+  padding: 20px;
+  border-top: 1px solid #30363d;
+  font-size: 0.9rem;
+">
+  <p>
+    🚀 Projet maintenu par <strong><a href="https://github.com/0xCyberLiTech" style="color:#58a6ff;text-decoration:none;">0xCyberLiTech</a></strong> |
+    🛡️ Cybersécurité & Supervision |
+    📚 Open Knowledge
+  </p>
+  <p style="margin-top:10px;">
+    © 2025 – Propulsé avec ❤️ &amp; du café
+  </p>
+  <p>
+    <a href="https://github.com/0xCyberLiTech" target="_blank" style="color:#8b949e;text-decoration:none;">🌐 Voir tous mes dépôts</a>
+  </p>
+</footer>
+
