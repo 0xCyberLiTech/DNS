@@ -128,25 +128,31 @@ Source : https://www.cloudflare.com/fr-fr/learning/dns/what-is-dns/
   <b>🔒 Un guide proposé par <a href="https://github.com/0xCyberLiTech">0xCyberLiTech</a> • Pour des tutoriels accessibles à tous. 🔒</b>
 </p>
 
-<footer style="
-  background-color: #0d1117;
-  color: #c9d1d9;
-  font-family: 'Share Tech Mono', monospace;
-  text-align: center;
-  padding: 20px;
-  border-top: 1px solid #30363d;
-  font-size: 0.9rem;
-">
+<footer class="footer-github-dark">
   <p>
-    🚀 Projet maintenu par <strong><a href="https://github.com/0xCyberLiTech" style="color:#58a6ff;text-decoration:none;">0xCyberLiTech</a></strong> |
-    🛡️ Cybersécurité & Supervision |
-    📚 Open Knowledge
+    Maintenu par <strong><a href="https://github.com/0xCyberLiTech">0xCyberLiTech</a></strong>
+    • Safety-first & Cyber²
   </p>
-  <p style="margin-top:10px;">
-    © 2025 – Propulsé avec ❤️ &amp; du café
-  </p>
-  <p>
-    <a href="https://github.com/0xCyberLiTech" target="_blank" style="color:#8b949e;text-decoration:none;">🌐 Voir tous mes dépôts</a>
-  </p>
+  <p>© 2025 – 100 % open source</p>
+  <p><a href="https://github.com/0xCyberLiTech">Voir mes dépôts</a></p>
 </footer>
+
+<style>
+.footer-github-dark {
+  background-color: #161b22;
+  color: #c9d1d9;
+  text-align: center;
+  padding: 16px;
+  font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 0.9rem;
+  border-top: 1px solid #30363d;
+}
+.footer-github-dark a {
+  color: #58a6ff;
+  text-decoration: none;
+}
+.footer-github-dark a:hover {
+  text-decoration: underline;
+}
+</style>
 
