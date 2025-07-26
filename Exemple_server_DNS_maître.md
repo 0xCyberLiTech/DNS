@@ -514,3 +514,14 @@ in-addr.arpa.           709     IN      SOA     b.in-addr-servers.arpa. nstld.ia
 ;; WHEN: Sun Jul 02 13:12:25 CEST 2023
 ;; MSG SIZE  rcvd: 161
 ```
+
+---
+
+**Mise à jour :** Juillet 2025
+
+---
+
+<p align="center">
+  <b>🔒 Un guide proposé par <a href="https://github.com/0xCyberLiTech">0xCyberLiTech</a> • Pour des tutoriels accessibles à tous. 🔒</b>
+</p>
+
