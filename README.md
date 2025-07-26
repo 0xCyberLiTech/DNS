@@ -128,31 +128,55 @@ Source : https://www.cloudflare.com/fr-fr/learning/dns/what-is-dns/
   <b>🔒 Un guide proposé par <a href="https://github.com/0xCyberLiTech">0xCyberLiTech</a> • Pour des tutoriels accessibles à tous. 🔒</b>
 </p>
 
-<footer class="footer-github-dark">
-  <p>
-    Maintenu par <strong><a href="https://github.com/0xCyberLiTech">0xCyberLiTech</a></strong>
-    • Safety-first & Cyber²
-  </p>
-  <p>© 2025 – 100 % open source</p>
-  <p><a href="https://github.com/0xCyberLiTech">Voir mes dépôts</a></p>
+<footer class="footer-animated">
+  <div class="footer-content">
+    <p>🛡️ Projet maintenu par <a href="https://github.com/0xCyberLiTech" target="_blank">0xCyberLiTech</a></p>
+    <p>🔓 Open Knowledge • 🔧 Cyber & Supervision</p>
+    <p>© 2025 – Tous droits distribués</p>
+  </div>
 </footer>
 
 <style>
-.footer-github-dark {
-  background-color: #161b22;
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+.footer-animated {
+  background: #0d1117;
+  border-top: 2px solid #30363d;
+  font-family: 'Share Tech Mono', monospace;
   color: #c9d1d9;
+  padding: 20px;
   text-align: center;
-  padding: 16px;
-  font-family: "Segoe UI", Helvetica, Arial, sans-serif;
-  font-size: 0.9rem;
-  border-top: 1px solid #30363d;
+  animation: fadeIn 1.5s ease-in;
 }
-.footer-github-dark a {
+
+.footer-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.footer-animated a {
   color: #58a6ff;
   text-decoration: none;
+  background: linear-gradient(120deg, #58a6ff, #00ffe1, #58a6ff);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: background-position 0.5s ease;
 }
-.footer-github-dark a:hover {
+
+.footer-animated a:hover {
+  background-position: right center;
   text-decoration: underline;
 }
-</style>
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>
