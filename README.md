@@ -31,12 +31,6 @@
 >
 > 🎯 <strong>Objectif :</strong> Offrir un contenu structuré, accessible et optimisé pour le référencement naturel, destiné aux étudiants, professionnels, administrateurs système, experts en sécurité et curieux du monde numérique.
 
-<p align="center">
-  <a href="https://github.com/0xCyberLiTech" target="_blank" rel="noopener">
-    <img src="https://skillicons.dev/icons?i=linux,debian,bash,docker,nginx,git,vim,python,markdown" alt="Skills" width="420">
-  </a>
-</p>
-
 ---
 
 ### 🎯 **Objectif de ce dépôt.**
@@ -119,6 +113,12 @@ En clair, le terme serveur DNS de référence désigne un serveur détenant rée
 Source : https://www.cloudflare.com/fr-fr/learning/dns/what-is-dns/
 
 ---
+
+<p align="center">
+  <a href="https://github.com/0xCyberLiTech" target="_blank" rel="noopener">
+    <img src="https://skillicons.dev/icons?i=linux,debian,bash,docker,nginx,git,vim,python,markdown" alt="Skills" width="420">
+  </a>
+</p>
 
 <p align="center">
   <b>🔒 Un guide proposé par <a href="https://github.com/0xCyberLiTech">0xCyberLiTech</a> • Pour des tutoriels accessibles à tous. 🔒</b>
