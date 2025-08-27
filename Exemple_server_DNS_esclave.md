@@ -8,50 +8,61 @@
   
   <br></br>
   
+  <h2>Laboratoire numérique pour la cybersécurité, Linux & IT</h2>
+
+
   <p align="center">
-    <em>Un dépôt pédagogique sur les DNS.</em><br>
-    <b>📊 Monitoring – 📈 Performance – ⚙️ Fiabilité</b>
+    <a href="https://0xcyberlitech.github.io/">
+      <img src="https://img.shields.io/badge/Portfolio-0xCyberLiTech-181717?logo=github&style=flat-square" alt="Portfolio" />
+    </a>
+    <a href="https://github.com/0xCyberLiTech">
+      <img src="https://img.shields.io/badge/Profil-GitHub-181717?logo=github&style=flat-square" alt="Profil GitHub" />
+    </a>
+    <a href="https://github.com/0xCyberLiTech/DNS/releases/latest">
+      <img src="https://img.shields.io/github/v/release/0xCyberLiTech/DNS?label=version" alt="Dernière version" />
+    </a>
+    <a href="https://github.com/0xCyberLiTech/DNS/blob/main/CHANGELOG.md">
+      <img src="https://img.shields.io/badge/📄%20CHANGELOG-DNS-blue" alt="Changelog" />
+    </a>
+    <a href="https://github.com/0xCyberLiTech?tab=repositories">
+      <img src="https://img.shields.io/badge/Dépôts-publics-blue?style=flat-square" alt="Dépôts publics" />
+    </a>
+    <a href="https://github.com/0xCyberLiTech/DNS/graphs/contributors">
+      <img src="https://img.shields.io/badge/👥%20Contributeurs-cliquez%20ici-007ec6?style=flat-square" alt="Contributeurs" />
+    </a>
   </p>
 
-  [![🌐 Portfolio](https://img.shields.io/badge/Portfolio-0xCyberLiTech-181717?logo=github&style=flat-square)](https://0xcyberlitech.github.io/)
-  [![🔗 Profil GitHub](https://img.shields.io/badge/Profil-GitHub-181717?logo=github&style=flat-square)](https://github.com/0xCyberLiTech)
-  [![📦 Dernière version](https://img.shields.io/github/v/release/0xCyberLiTech/DNS?label=version&style=flat-square&color=blue)](https://github.com/0xCyberLiTech/DNS/releases/latest)
-  [![📄 CHANGELOG](https://img.shields.io/badge/📄%20Changelog-DNS-blue?style=flat-square)](https://github.com/0xCyberLiTech/DNS/blob/main/CHANGELOG.md)
-  [![📂 Dépôts publics](https://img.shields.io/badge/Dépôts-publics-blue?style=flat-square)](https://github.com/0xCyberLiTech?tab=repositories)
-  [![👥 Contributeurs](https://img.shields.io/badge/👥%20Contributeurs-cliquez%20ici-007ec6?style=flat-square)](https://github.com/0xCyberLiTech/DNS/graphs/contributors)
+</div>
 
+<!--
+Optimisation SEO : mots-clés cybersécurité, Linux, administration système, sécurité informatique, tutoriels, guides, expertise, formation, supervision, Docker, OpenVAS, firewall, proxy, DNS, SSH, Debian, IT, réseau, cryptographie, open source, ressources techniques, étudiants, professionnels, passionnés.
+-->
+
+<div align="center">
+  <img src="https://img.icons8.com/fluency/96/000000/cyber-security.png" alt="CyberSec" width="80"/>
+</div>
+
+<div align="center">
+  <p>
+    <strong>Cybersécurité</strong> <img src="https://img.icons8.com/color/24/000000/lock--v1.png"/> • <strong>Linux Debian</strong> <img src="https://img.icons8.com/color/24/000000/linux.png"/> • <strong>Sécurité informatique</strong> <img src="https://img.icons8.com/color/24/000000/shield-security.png"/>
+  </p>
 </div>
 
 ---
 
-### 👨‍💻 **À propos de moi**
+## 🚀 À propos & Objectifs
 
-> Bienvenue sur le dépôt <strong>0xCyberLiTech</strong>, votre laboratoire numérique pour l'<strong>apprentissage</strong> et la <strong>vulgarisation</strong> de la <strong>cybersécurité</strong>, de l'<strong>administration Linux Debian</strong> et de la <strong>sécurité informatique</strong>.
-> Passionné par <strong>Linux</strong>, la <strong>cryptographie</strong>, la <strong>supervision réseau</strong> et les <strong>systèmes sécurisés</strong>, je partage ici des <strong>tutoriels</strong>, <strong>guides pratiques</strong>, <strong>fiches techniques</strong> et <strong>retours d'expérience</strong> pour renforcer vos compétences IT.
->
-> 🎯 <strong>Objectif :</strong> Offrir un contenu structuré, accessible et optimisé pour le référencement naturel, destiné aux étudiants, professionnels, administrateurs système, experts en sécurité et curieux du monde numérique.
+Ce projet propose des solutions innovantes et accessibles en cybersécurité, avec une approche centrée sur la simplicité d’utilisation et l’efficacité. Il vise à accompagner les utilisateurs dans la protection de leurs données et systèmes, tout en favorisant l’apprentissage et le partage des connaissances.
 
----
-
-### 🎯 **Objectif de ce dépôt.**
-
-> Ce dépôt a pour vocation de centraliser un ensemble de notions clés autour du DNS (Domain Name System). Il s’adresse aux passionnés, étudiants et professionnels souhaitant mieux comprendre le fonctionnement de
-> ce système fondamental de l'Internet, apprendre à configurer et dépanner les serveurs DNS, et se familiariser avec les concepts et outils essentiels pour garantir la résolution de noms et la disponibilité de
-> leurs services en ligne.
+Le contenu est structuré, accessible et optimisé SEO pour répondre aux besoins de :
+- 🎓 Étudiants : approfondir les connaissances
+- 👨‍💻 Professionnels IT : outils et pratiques
+- 🖥️ Administrateurs système : sécuriser l’infrastructure
+- 🛡️ Experts cybersécurité : ressources techniques
+- 🚀 Passionnés du numérique : explorer les bonnes pratiques
 
 ---
 
-## Exemple server DNS esclave.
-
-👋 Sommaire des sujets abordés :
-
-- 01 - [Mise en place d'un serveur DNS (esclave).](#balise_01)
-- 02 - [Transfert de Zone Master > Slave.](#balise_02)
-- 03 - [Configuration Serveur Esclave.](#balise_03)
-- 04 - [Configuration DNS (resolv.conf).](#balise_04)
-- 05 - [Tests DNS Esclave.](#balise_05)
-
-<a name="balise_01"></a>
 ## - 01 Mise en place d'un serveur DNS (esclave) sur Debian 11 ou Debian 12.
 
 Schéma de principe pour la réalisation de notre maquette de labo.
