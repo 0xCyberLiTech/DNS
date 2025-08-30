@@ -63,477 +63,483 @@ Le contenu est structuré, accessible et optimisé SEO pour répondre aux besoin
 
 ---
 
-## Exemple server DNS maître.
+# TP pas à pas — Installation & configuration d’un **serveur DNS Maître** (BIND9) sous **Debian 12 (Bookworm)**
 
-👋 Sommaire des sujets abordés :
+> **Objectif pédagogique**  
+> À la fin de ce TP, vous saurez installer, configurer, tester et sécuriser un **serveur DNS maître** avec **BIND9** sur Debian 12.  
+> Vous créerez une **zone directe** et une **zone inverse**, vérifierez la configuration, puis effectuerez des tests de résolution depuis le serveur et un poste client.
 
-- 01 - [Mise en place d'un serveur DNS (maître).](#balise_01)
-- 02 - [Configuration serveur cache.](#balise_02)
-- 03 - [Configuration serveur maître.](#balise_03)
-- 04 - [Configuration DNS (resolv.conf).](#balise_04)
-- 05 - [Tests DNS Master.](#balise_05)
+---
 
-<a name="balise_01"></a>
-## - 01 Mise en place d'un serveur DNS (maître).
+## 0) Contexte, prérequis & topologie
 
-Schéma de principe pour la réalisation de notre maquette de labo.
+### Contexte
+- Système : **Debian 12 (Bookworm)**, à jour
+- Rôle : **DNS Maître** pour un domaine interne d’exemple `mondomaine.local`
+- Hôte DNS : `ns1.mondomaine.local`
+- IP fixe : `192.168.1.10/24` (passerelle `192.168.1.1`)
 
-Affectation des taches de chaques serveurs :
+> Adaptez *domaine*, *noms d’hôtes* et *adresses IP* à votre environnement.
 
-- (srv-linux-01) - Serveur (Nagios Core + NRPE + Smokeping),     192.168.50.200.
-- (srv-linux-02) - Serveur (Test),                               192.168.50.201.
-- (srv-linux-03) - serveur (DNS maître),                         192.168.50.203.
+### Pré-requis
+- Accès `sudo` ou root
+- Heure système correcte (NTP de préférence)
+- Un poste client Linux (Debian/Ubuntu) ou Windows pour tester
 
-![Apache_logo](./images/schema_nagios.png)
-
-Nous allons voir comment mettre en place un serveur DNS maître (primaire) dans une infrastructure locale. 
-Pour assurer la disponibilité de notre serveur maître et également répartir la charge des requêtes DNS, nous mettrons en place un serveur esclave (secondaire). 
-
-Le serveur DNS le plus utilisé dans l’univers GNU/Linux est BIND9 (Berkley Internet Name Domain).
-
-Installer BIND9 sur la machine srv-linux-03.cyberlitech.lan :
+### Schéma de la topologie (ASCII)
 ```
-apt-get install bind9 bind9-doc resolvconf ufw
+             ┌───────────────────────────────────────────┐
+             │                Réseau LAN                 │
+             │                192.168.1.0/24             │
+             └───────────────────────────────────────────┘
+                        │
+                        │
+                ┌───────┴────────┐
+                │   DNS Maître    │
+                │ ns1.mondomaine  │
+                │ 192.168.1.10    │
+                └───────┬────────┘
+                        │
+        ┌───────────────┴────────────────┐
+        │                                │
+┌───────▼────────┐                ┌──────▼────────┐
+│  Client Linux  │                │ Client Win/OS │
+│ 192.168.1.20   │                │ 192.168.1.30  │
+└────────────────┘                └───────────────┘
+        (utilisent ns1 = 192.168.1.10 comme résolveur primaire)
 ```
-Démarrez le service :
+
+### Schéma Mermaid (collable dans https://mermaid.live/)
+```mermaid
+flowchart LR
+  subgraph LAN[LAN 192.168.1.0/24]
+    NS1[ns1.mondomaine.local<br/>192.168.1.10]
+    C1[Client Linux<br/>192.168.1.20]
+    C2[Client Windows/macOS<br/>192.168.1.30]
+  end
+  C1 -- DNS req (53/UDP-TCP) --> NS1
+  C2 -- DNS req (53/UDP-TCP) --> NS1
 ```
-systemctl start bind9
+
+---
+
+## 1) Étape 1 — Préparer l’IP **statique** du serveur
+
+1. Vérifier l’interface réseau :  
+   ```bash
+   ip -br a
+   ```
+2. Configurer l’IP statique via **systemd-networkd** ou **NetworkManager**. Exemple (NetworkManager, fichier keyfile) :
+   ```ini
+   # /etc/NetworkManager/system-connections/lan.nmconnection
+   [connection]
+   id=lan
+   type=ethernet
+   interface-name=eth0
+   autoconnect=true
+
+   [ipv4]
+   method=manual
+   addresses=192.168.1.10/24
+   gateway=192.168.1.1
+   dns=127.0.0.1;
+   dns-search=mondomaine.local;
+
+   [ipv6]
+   method=disabled
+   ```
+   Puis :
+   ```bash
+   sudo nmcli connection reload
+   sudo nmcli connection up lan
+   ```
+
+> **Pourquoi `dns=127.0.0.1` ?** Sur le **serveur DNS**, on résoudra en local via BIND9.  
+> **Sur les clients**, on pointera vers **192.168.1.10** (ns1).
+
+---
+
+## 2) Étape 2 — Installer BIND9 et outils
+
+```bash
+sudo apt update && sudo apt -y upgrade
+sudo apt install -y bind9 bind9-utils bind9-dnsutils
+named -v     # doit afficher BIND 9.18.x (Debian 12)
 ```
+
+Fichiers principaux utiles (Debian) :  
+- `/etc/bind/named.conf` (inclut les autres)  
+- `/etc/bind/named.conf.options` (options globales)  
+- `/etc/bind/named.conf.local` (déclaration des zones locales)  
+- `/var/cache/bind/` (cache, clés…)  
+- Journaux via `journalctl -u bind9` (par défaut, AppArmor actif)
+
+---
+
+## 3) Étape 3 — Paramètres globaux de BIND9
+
+Éditez **/etc/bind/named.conf.options** :
+```bash
+sudo nano /etc/bind/named.conf.options
 ```
-systemctl status bind9
-
-● named.service - BIND Domain Name Server
-     Loaded: loaded (/lib/systemd/system/named.service; enabled; preset: enabled)
-     Active: active (running) since Sun 2023-07-02 00:00:12 CEST; 3min 20s ago
-       Docs: man:named(8)
-   Main PID: 1050 (named)
-     Status: "running"
-      Tasks: 10 (limit: 4644)
-     Memory: 42.9M
-        CPU: 286ms
-     CGroup: /system.slice/named.service
-             └─1050 /usr/sbin/named -f -u bind
-
-juil. 02 00:00:12 srv-linux-03 named[1050]: managed-keys-zone: loaded serial 0
-juil. 02 00:00:12 srv-linux-03 named[1050]: zone 0.in-addr.arpa/IN: loaded serial 1
-juil. 02 00:00:12 srv-linux-03 named[1050]: zone 127.in-addr.arpa/IN: loaded serial 1
-juil. 02 00:00:12 srv-linux-03 named[1050]: zone 255.in-addr.arpa/IN: loaded serial 1
-juil. 02 00:00:12 srv-linux-03 named[1050]: zone localhost/IN: loaded serial 2
-juil. 02 00:00:12 srv-linux-03 named[1050]: all zones loaded
-juil. 02 00:00:12 srv-linux-03 named[1050]: running
-juil. 02 00:00:12 srv-linux-03 systemd[1]: Started named.service - BIND Domain Name Server.
-juil. 02 00:00:22 srv-linux-03 named[1050]: managed-keys-zone: Unable to fetch DNSKEY set '.': timed out
-juil. 02 00:00:22 srv-linux-03 named[1050]: resolver priming query complete: timed out
-```
-<a name="balise_02"></a>
-## - 02 Configuration serveur cache.
-
-Par défaut, BIND est déjà configuré en tant que serveur cache. 
-Il suffit simplement d’ajouter le ou les serveurs DNS de votre FAI (box internet).212.27.40.240  ou 212.27.40.241
-
-Modifier le fichier /etc/bind/named.conf.options et dé-commenter le bloc :
-
-Avant :
-```
-nano /etc/bind/named.conf.options
-
+Exemple **sécurisé pour un DNS d’autorité (maître)** dans un LAN :
+```conf
 options {
-        directory "/var/cache/bind";
+    directory "/var/cache/bind";
 
-        // If there is a firewall between you and nameservers you want
-        // to talk to, you may need to fix the firewall to allow multiple
-        // ports to talk.  See http://www.kb.cert.org/vuls/id/800113
+    // Écoute sur l’IPv4 locale et l’IP du LAN
+    listen-on { 127.0.0.1; 192.168.1.10; };
+    // Désactiver IPv6 si non utilisé
+    listen-on-v6 { none; };
 
-        // If your ISP provided one or more IP addresses for stable
-        // nameservers, you probably want to use them as forwarders.
-        // Uncomment the following block, and insert the addresses replacing
-        // the all-0's placeholder.
+    // Ce serveur est d’autorité pour ses zones. Évitez la récursion aux non‑autorisés.
+    recursion no;
 
-        // forwarders {
-        //      0.0.0.0;
-        // };
+    // Autoriser les requêtes pour nos zones à tout le LAN (ajustez votre plage)
+    allow-query { 127.0.0.1; 192.168.1.0/24; };
+
+    // Bloquer tout transfert de zone par défaut
+    allow-transfer { none; };
+
+    // Empêcher que la version BIND ne fuite via CHAOS TXT version.bind
+    version "not disclosed";
+
+    // DNSSEC (défaut activé côté BIND 9.18 pour la validation côté récursif)
+    // Ici non nécessaire pour l’autorité pure, on laisse la valeur par défaut.
+    // dnssec-validation auto;
+
+    // Réduire le délai des clients qui insistent (optionnel)
+    // rate-limit { responses-per-second 10; };
+};
 ```
-Après :
+
+Vérifiez la syntaxe :
+```bash
+sudo named-checkconf
 ```
+
+---
+
+## 4) Étape 4 — Déclarer les **zones** (fichier local)
+
+Éditez **/etc/bind/named.conf.local** :
+```bash
+sudo nano /etc/bind/named.conf.local
+```
+
+Ajoutez **votre zone directe** et **zone inverse** :
+```conf
+zone "mondomaine.local" {
+    type master;
+    file "/etc/bind/db.mondomaine.local";
+};
+
+zone "1.168.192.in-addr.arpa" {
+    type master;
+    file "/etc/bind/db.192.168.1";
+};
+```
+
+> Remplacez `mondomaine.local` et la plage inverse `1.168.192` selon votre réseau.
+
+---
+
+## 5) Étape 5 — Créer la **zone directe** (db.mondomaine.local)
+
+1. Partir d’un modèle :
+   ```bash
+   sudo cp /etc/bind/db.local /etc/bind/db.mondomaine.local
+   sudo nano /etc/bind/db.mondomaine.local
+   ```
+
+2. Exemple complet **commenté** :
+   ```zone
+   $TTL    86400          ; TTL par défaut (1 jour)
+   @       IN      SOA     ns1.mondomaine.local. admin.mondomaine.local. (
+                           2025083001 ; Serial (YYYYMMDDnn) — INCRÉMENTEZ à chaque modif
+                           3600       ; Refresh (secondes)
+                           1800       ; Retry
+                           1209600    ; Expire
+                           86400 )    ; Negative caching
+
+   ; Serveurs d’autorité (NS)
+   @       IN      NS      ns1.mondomaine.local.
+
+   ; Hôte du DNS maître
+   ns1     IN      A       192.168.1.10
+
+   ; Enregistrements principaux du domaine
+   @       IN      A       192.168.1.10          ; apex vers le serveur (si souhaité)
+   www     IN      A       192.168.1.20
+   mail    IN      A       192.168.1.30
+
+   ; Mail exchanger (MX)
+   @       IN      MX 10   mail.mondomaine.local.
+
+   ; Alias (CNAME) — exemples
+   intranet IN     CNAME   www.mondomaine.local.
+   web      IN     CNAME   www.mondomaine.local.
+   ```
+
+3. **Points d’attention**  
+   - **FQDN en finissant par un point** pour les valeurs (ex. `mail.mondomaine.local.`)  
+   - **Incrémentez le Serial** à chaque modification, sinon les changements ne seront pas pris en compte.
+
+Vérifiez la zone :
+```bash
+sudo named-checkzone mondomaine.local /etc/bind/db.mondomaine.local
+```
+
+---
+
+## 6) Étape 6 — Créer la **zone inverse** (db.192.168.1)
+
+1. Partir d’un modèle :
+   ```bash
+   sudo cp /etc/bind/db.127 /etc/bind/db.192.168.1
+   sudo nano /etc/bind/db.192.168.1
+   ```
+
+2. Exemple **commenté** :
+   ```zone
+   $TTL    86400
+   @       IN      SOA     ns1.mondomaine.local. admin.mondomaine.local. (
+                           2025083001 ; Serial — incrémentez
+                           3600       ; Refresh
+                           1800       ; Retry
+                           1209600    ; Expire
+                           86400 )    ; Negative caching
+
+   @       IN      NS      ns1.mondomaine.local.
+
+   ; PTR pour les IP du LAN
+   10      IN      PTR     ns1.mondomaine.local.
+   20      IN      PTR     www.mondomaine.local.
+   30      IN      PTR     mail.mondomaine.local.
+   ```
+
+Vérifiez la zone :
+```bash
+sudo named-checkzone 1.168.192.in-addr.arpa /etc/bind/db.192.168.1
+```
+
+---
+
+## 7) Étape 7 — Redémarrage, activation & statut
+
+```bash
+sudo systemctl restart bind9
+sudo systemctl enable bind9
+systemctl status bind9 --no-pager
+```
+
+Logs en cas d’erreurs :
+```bash
+journalctl -u bind9 -b --no-pager
+```
+
+---
+
+## 8) Étape 8 — Tests de résolution (serveur & client)
+
+### Depuis le **serveur** (ns1)
+```bash
+# Requête A sur le domaine
+dig @127.0.0.1 mondomaine.local +noall +answer
+
+# Requête A sur un hôte
+dig @127.0.0.1 www.mondomaine.local +noall +answer
+
+# Requête MX
+dig @127.0.0.1 mondomaine.local MX +noall +answer
+
+# PTR (inverse) pour 192.168.1.20
+dig @127.0.0.1 -x 192.168.1.20 +noall +answer
+```
+
+### Depuis un **client Linux**
+Configurer le **résolveur** du client (par exemple `/etc/systemd/resolved.conf` ou `/etc/resolv.conf`) pour pointer vers **192.168.1.10**.
+
+- Test :
+  ```bash
+  dig @192.168.1.10 www.mondomaine.local +noall +answer
+  host 192.168.1.30 192.168.1.10
+  ```
+
+### Depuis un **client Windows**
+- `nslookup`
+  ```powershell
+  nslookup
+  > server 192.168.1.10
+  > www.mondomaine.local
+  ```
+
+> **Attendus** : les réponses contiennent les **IP** que vous avez définies et les **NOMS** correspondants pour l’inverse.
+
+---
+
+## 9) Étape 9 — Pare-feu (UFW/iptables/nftables)
+
+### UFW
+```bash
+sudo ufw allow 53/udp
+sudo ufw allow 53/tcp
+sudo ufw reload
+sudo ufw status
+```
+
+### nftables (exemple minimal)
+```bash
+sudo nano /etc/nftables.conf
+```
+Ajoutez (à adapter à votre politique) :
+```nft
+table inet filter {
+  chain input {
+    type filter hook input priority 0;
+
+    iif "lo" accept
+    ct state established,related accept
+
+    # Autoriser DNS UDP/TCP depuis le LAN
+    ip saddr 192.168.1.0/24 udp dport 53 accept
+    ip saddr 192.168.1.0/24 tcp dport 53 accept
+
+    # ... vos autres règles
+    reject with icmpx type admin-prohibited
+  }
+}
+```
+Puis :
+```bash
+sudo nft -f /etc/nftables.conf
+sudo systemctl enable nftables
+```
+
+---
+
+## 10) Étape 10 — **Sécurisation** (bonnes pratiques)
+
+- **Rôle autoritaire** : `recursion no;` déjà positionné (évite d’être un open‑resolver).
+- **Limiter qui peut interroger** : `allow-query { 192.168.1.0/24; };` (ajustez).
+- **Bloquer les transferts de zones** : `allow-transfer { none; };` (ou liste d’esclaves autorisés).
+- **Cacher la version** : `version "not disclosed";` (limite le fingerprinting basique).
+- **AppArmor** : actif par défaut sur Debian, garde-fou utile.
+- **MCO** : Mettre à jour régulièrement (`apt upgrade`), surveiller les CVE BIND9.
+- **Journalisation** : utilisez `journalctl -u bind9` ou configurez des `logging {}` dédiés (nécessite droits AppArmor pour fichiers ciblés).
+
+> **Aller plus loin** : DNSSEC signé (ZSK/KSK), *Response Rate Limiting* (RRL), *Views* et *ACL*, *Split‑Horizon*, intégration avec IPAM/Ansible.
+
+---
+
+## 11) Questions de validation (rapides)
+
+1. À quoi sert le **Serial** dans le SOA ?  
+2. Quelle directive **désactive la récursion** sur un DNS d’autorité ?  
+3. Pourquoi faut‑il un **PTR** dans la zone inverse ?  
+4. Quelle commande permet de **valider** la syntaxe d’une **zone** ?  
+5. Quelles sont les **deux** couches de transport utilisées par DNS ?
+
+*Réponses attendues* : (1) déclencher/propager les mises à jour de zone ; (2) `recursion no;` ; (3) pour la résolution **inverse** IP→Nom ; (4) `named-checkzone` ; (5) **UDP** et **TCP** (port **53**).
+
+---
+
+## 12) Dépannage — erreurs fréquentes & solutions
+
+- **SERVFAIL / NXDOMAIN** : vérifier l’orthographe des **FQDN** (points finaux), la cohérence A/MX/CNAME.  
+- **`dns_rdata_fromtext` ou `unexpected end of file`** : erreur de syntaxe dans le fichier de zone (tabulations, espaces, `;`).  
+- **Pas de réponse sur le client** : pare‑feu ou client ne pointe pas vers le bon **DNS primaire**.  
+- **Zone inverse ne répond pas** : nom de **zone in‑addr.arpa** incorrect ou PTR manquant.  
+- **Changement non pris en compte** : **Serial** non incrémenté ; redémarrer ou `rndc reload`.  
+
+Commandes utiles :
+```bash
+sudo named-checkconf
+sudo named-checkzone mondomaine.local /etc/bind/db.mondomaine.local
+sudo named-checkzone 1.168.192.in-addr.arpa /etc/bind/db.192.168.1
+sudo rndc reload       # recharger proprement
+sudo rndc reconfig     # recharger la conf globale
+journalctl -u bind9 -f # suivre les logs en direct
+```
+
+---
+
+## 13) Annexes — modèles prêts à l’emploi
+
+**/etc/bind/named.conf.options**
+```conf
 options {
-        directory "/var/cache/bind";
-
-        // If there is a firewall between you and nameservers you want
-        // to talk to, you may need to fix the firewall to allow multiple
-        // ports to talk.  See http://www.kb.cert.org/vuls/id/800113
-
-        // If your ISP provided one or more IP addresses for stable
-        // nameservers, you probably want to use them as forwarders.
-        // Uncomment the following block, and insert the addresses replacing
-        // the all-0's placeholder.
-
-        forwarders {
-                212.27.40.240;
-                212.27.40.241;
-        };
+    directory "/var/cache/bind";
+    listen-on { 127.0.0.1; 192.168.1.10; };
+    listen-on-v6 { none; };
+    recursion no;
+    allow-query { 127.0.0.1; 192.168.1.0/24; };
+    allow-transfer { none; };
+    version "not disclosed";
+};
 ```
-Enregistrer : Ctrl+o et entrée. Quitter : Ctrl+x
 
-Mettez vos propres serveurs DNS ou n’importe quel serveur OpenDNS.
+**/etc/bind/named.conf.local**
+```conf
+zone "mondomaine.local" {
+    type master;
+    file "/etc/bind/db.mondomaine.local";
+};
 
-Serveur DNS google :
+zone "1.168.192.in-addr.arpa" {
+    type master;
+    file "/etc/bind/db.192.168.1";
+};
 ```
-8.8.8.8
-8.8.4.4
+
+**/etc/bind/db.mondomaine.local**
+```zone
+$TTL 86400
+@   IN  SOA ns1.mondomaine.local. admin.mondomaine.local. (
+        2025083001 ; Serial
+        3600       ; Refresh
+        1800       ; Retry
+        1209600    ; Expire
+        86400 )    ; Negative
+
+@       IN  NS      ns1.mondomaine.local.
+ns1     IN  A       192.168.1.10
+@       IN  A       192.168.1.10
+www     IN  A       192.168.1.20
+mail    IN  A       192.168.1.30
+@       IN  MX 10   mail.mondomaine.local.
 ```
-Serveur DNS Free
+
+**/etc/bind/db.192.168.1**
+```zone
+$TTL 86400
+@   IN  SOA ns1.mondomaine.local. admin.mondomaine.local. (
+        2025083001 ; Serial
+        3600
+        1800
+        1209600
+        86400 )
+@       IN  NS      ns1.mondomaine.local.
+10      IN  PTR     ns1.mondomaine.local.
+20      IN  PTR     www.mondomaine.local.
+30      IN  PTR     mail.mondomaine.local.
 ```
-212.27.40.240
-212.27.40.241
+
+---
+
+## 14) (Optionnel) Préparer un **esclave** plus tard
+Si vous déploierez un DNS **esclave** (ns2), remplacez `allow-transfer { none; };` par :
+```conf
+acl "dns-slaves" { 192.168.1.11; };     // IP de ns2
+allow-transfer { dns-slaves; };
+also-notify { 192.168.1.11; };          // notification de modifications
 ```
-Sauvegarder et relancer le service BIND :
-```
-systemctl restart bind9
-```
-On peut effectuer un test à l’aide de la commande DIG en interrogeant le serveur à partir de lui-même :
-```
-dig -x 127.0.0.1
+Puis déclarez la zone en `type slave;` sur ns2 avec `masters { 192.168.1.10; };`
 
-; <<>> DiG 9.18.16-1~deb12u1-Debian <<>> -x 127.0.0.1
-;; global options: +cmd
-;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 47558
-;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+---
 
-;; OPT PSEUDOSECTION:
-; EDNS: version: 0, flags:; udp: 1232
-; COOKIE: 7d07425ce70d04290100000064a0a4bdbf9ef261a688da26 (good)
-;; QUESTION SECTION:
-;1.0.0.127.in-addr.arpa.                IN      PTR
-
-;; ANSWER SECTION:
-1.0.0.127.in-addr.arpa. 604800  IN      PTR     localhost.
-
-;; Query time: 4 msec
-;; SERVER: ::1#53(::1) (UDP)
-;; WHEN: Sun Jul 02 00:12:13 CEST 2023
-;; MSG SIZE  rcvd: 102
-```
-Vous pouvez interroger d’autres domaines par exemple le site :
-```
-dig cyberlitech.lan
-
-; <<>> DiG 9.18.16-1~deb12u1-Debian <<>> cyberlitech.lan
-;; global options: +cmd
-;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 62911
-;; flags: qr rd ra ad; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL:
-```
-<a name="balise_03"></a>
-## - 03 Configuration serveur maître.
-Nous allons configurer BIND comme un serveur maître sur le même serveur pour le domaine pixelabs.fr 
-
-Éditez le fichier named.conf.local
-
-Ajoutez les lignes suivante (adapter par rapport à votre conf)
-```
-nano /etc/bind/named.conf.local
-
-// zone cyberlitech.lan
-zone "cyberlitech.lan" IN {
-           type master;
-           file "/etc/bind/cyberlitech.fw.zone";
-           };
-
-// zone inverse cyberlitech.lan
-zone "50.168.192.in-addr.arpa" {
-           type master;
-           file "/etc/bind/cyberlitech.rev.zone";
-           };
-```
-Enregistrer : Ctrl+o et entrée. Quitter : Ctrl+x
-
-Nous allons maintenant créer 2 fichiers que nous avons définis ci-dessus :
-```
-/etc/bind/cyberlitech.fw.zone
-/etc/bind/cyberlitech.rev.zone
-```
-```
-nano /etc/bind/cyberlitech.fw.zone
-
-$TTL    604800
-@             IN      SOA     nsmaster.cyberlitech.lan. root.cyberlitech.lan. (
-                       20181226         ; Serial
-                         604800         ; Refresh
-                          86400         ; Retry
-                        2419200         ; Expire
-                         604800 )       ; Negative Cache TTL
-
-; Serveur DNS
-
-@              IN     NS         srv-linux-03.cyberlitech.lan.
-@              IN      A         192.168.50.203
-
-; Resolve DNS
-
-srv-linux-03   IN      A         192.168.50.203
-
-; Machine du domaine
-
-srv-linux-01   IN      A         192.168.50.200
-srv-linux-02   IN      A         192.168.50.201
-```
-Enregistrer : Ctrl+o et entrée. Quitter : Ctrl+x
-
-Vous pouvez rajouter d’autres enregistrements DNS à la suite et n’oubliez pas de rajouter un enregistrement PTR dans la zone inversée (ci-dessous)
-
-Zone Inversée cyberlitech.rev.zone.
-Configuration de la zone inversée :
-```
-cp /etc/bind/db.127 /etc/bind/cyberlitech.rev.zone
-```
-Éditer le fichier et modifier le domaine et l’adresse du serveur :
-```
-nano /etc/bind/cyberlitech.rev.zone
-
-;
-; BIND reverse data file for local loopback interface
-;
-$TTL	604800
-@	IN	SOA	srv-linux-03.cyberlitech.lan. root.cyberlitech.lan. (
-      20181226	        ; Serial
-        604800	        ; Refresh
-         86400	        ; Retry
-       2419200	        ; Expire
-        604800 )	; Negative Cache TTL
-
-; Serveur DNS
-
-@	IN	NS	srv-linux-03.cyberlitech.lan.
-@	IN	PTR	cyberlitech.lan.
-
-; Resolve DNS
-
-srv-linux-03	IN	A	192.168.50.203
-
-; Machine du domaine
-
-203	IN	PTR	srv-linux-03.cyberlitech.lan.
-200	IN	PTR	srv-linux-01.cyberlitech.lan.
-201	IN	PTR	srv-linux-02.cyberlitech.lan.
-```
-Enregistrer : Ctrl+o et entrée. Quitter : Ctrl+x
-
-Remarque :
-```
-203 = 192.168.50.203 = srv-linux-03
-200 = 192.168.50.200 = srv-linux-01
-201 = 192.168.50.201 = srv-linux-02
-```
-<a name="balise_04"></a>
-## - 04 Configuration DNS (resolv.conf).
-Modifier le fichier resolv.conf. Attention : 
-Si ce fichier se met à jour automatiquement (dynamique) par resolvconf, ne pas le modifier manuellement.
-
-C’est le cas pour moi :
-```
-cat /etc/resolv.conf
-
-# Dynamic resolv.conf(5) file for glibc resolver(3) generated by resolvconf(8)
-#     DO NOT EDIT THIS FILE BY HAND -- YOUR CHANGES WILL BE OVERWRITTEN
-nameserver 127.0.0.1
-search cyberlitech.lan
-```
-Vous devez alors ajouter le domaine et le serveur DNS depuis le fichier /etc/network/interfaces
-```
-# the primary network interface
-allow-hotplug enp0s3
-iface enp0s3 inet static
-        address 192.168.50.203/24
-        gateway 192.168.50.1
-        dns-domain cyberlitech.lan
-        dns-nameservers 127.0.0.1
-```
-Relancez le service réseau :
-```
-systemctl restart networking
-```
-<a name="balise_05"></a>
-## - 05 Tests DNS Master.
-Vérifier la bonne configuration avant de démarrer BIND :
-
-On vérifie la configuration :
-```
-named-checkconf
-```
-RAS
-
-Tester la zone principal :
-```
-named-checkzone cyberlitech.lan /etc/bind/cyberlitech.fw.zone
-
-zone cyberlitech.lan/IN: loaded serial 20181226
-OK
-```
-Tester aussi, la zone inversée :
-```
-named-checkzone 50.168.192.in-addr.arpa /etc/bind/cyberlitech.rev.zone
-
-zone 50.168.192.in-addr.arpa/IN: loaded serial 20181226
-OK
-```
-Redémarrez le service BIND9.
-Vérification de l'état du service BIND9.
-```
-systemctl restart bind9
-systemctl status bind9
-
-● named.service - BIND Domain Name Server
-     Loaded: loaded (/lib/systemd/system/named.service; enabled; preset: enabled)
-     Active: active (running) since Sun 2023-07-02 01:08:33 CEST; 10s ago
-       Docs: man:named(8)
-   Main PID: 721 (named)
-     Status: "running"
-      Tasks: 6 (limit: 4644)
-     Memory: 32.6M
-        CPU: 35ms
-     CGroup: /system.slice/named.service
-             └─721 /usr/sbin/named -f -u bind
-
-juil. 02 01:08:33 srv-linux-03 named[721]: zone localhost/IN: loaded serial 2
-juil. 02 01:08:33 srv-linux-03 named[721]: zone 127.in-addr.arpa/IN: loaded serial 1
-juil. 02 01:08:33 srv-linux-03 named[721]: zone 255.in-addr.arpa/IN: loaded serial 1
-juil. 02 01:08:33 srv-linux-03 named[721]: zone 50.168.192.in-addr.arpa/IN: loaded serial 20181226
-juil. 02 01:08:33 srv-linux-03 named[721]: all zones loaded
-juil. 02 01:08:33 srv-linux-03 named[721]: running
-juil. 02 01:08:33 srv-linux-03 systemd[1]: Started named.service - BIND Domain Name Server.
-juil. 02 01:08:33 srv-linux-03 named[721]: zone cyberlitech.lan/IN: sending notifies (serial 20181226)
-juil. 02 01:08:33 srv-linux-03 named[721]: managed-keys-zone: Key 20326 for zone . is now trusted (acceptance timer complete)
-juil. 02 01:08:43 srv-linux-03 named[721]: resolver priming query complete: timed out
-```
-Tout est OK sur notre machine srv-linux-03 (server DNS maître - 192.168.50.203).
-
-On test la résolution de nom depuis une autre machine :
-
-Nous allons nous connecter à la machine srv-linux-01, puis effectuter les tests depuis celle-ci vers la machine srv-linux-02 (192.168.50.201) :
-
-Configuration en place sur la machine srv-linux-01 (192.168.50.200).
-
-- Configuration du fichier /etc/network/hosts.
-```
-cat /etc/network/hosts
-127.0.0.1       localhost.localdomain           localhost
-192.168.50.200  srv-linux-01.cyberlitech.lan    sr-linux-01
-```
-Configuration en place sur la machine srv-linux-01 (192.168.50.200).
-
-- Configuration du fichier /etc/network/interfaces.
-```
-cat /etc/network/interfaces
-
-# The primary network interface enp0s3
-allow-hotplug enp0s3
-iface enp0s3 inet static
-   address 192.168.50.200/24
-   gateway 192.168.50.1
-   dns-domain cyberlitech.lan
-   dns-nameservers 192.168.50.203
-```
-Configuration en place sur la machine srv-linux-01 (192.168.50.200).
-
-- Configuration du fichier /etc/resolv.conf.
-```
-domain cyberlitech.lan
-search cyberlitech.lan
-nameserver 192.168.50.203
-```
-- Test de ping vers 8.8.8.8 depuis la machine srv-linux-01 (192.168.50.200) .
-```
-ping 8.8.8.8
-PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
-64 bytes from 8.8.8.8: icmp_seq=1 ttl=119 time=19.5 ms
-64 bytes from 8.8.8.8: icmp_seq=2 ttl=119 time=21.1 ms
-64 bytes from 8.8.8.8: icmp_seq=3 ttl=119 time=19.4 ms
-```
-Toujours depuis la machine srv-linux-01 (192.168.50.200).
-
-- Test nslookup srv-linux-02 (192.168.50.201) :
-```
-nslookup srv-linux-02
-Server:         192.168.50.203
-Address:        192.168.50.203#53
-
-Name:   srv-linux-02.cyberlitech.lan
-Address: 192.168.50.201
-```
-Toujours depuis la machine srv-linux-01 (192.168.50.200).
-
-- Test nslookup 192.168.50.201 vers la machine srv-linux-02 (192.168.50.201) :
-```
-nslookup 192.168.50.201
-201.50.168.192.in-addr.arpa     name = srv-linux-02.cyberlitech.lan.
-```
-Toujours depuis la machine srv-linux-01 (192.168.50.200).
-
-- Test dig -x 192.168.50.201 (srv-linux-02 - 192.168.50.201) :
-```
- dig -x 192.168.50.201
-
-; <<>> DiG 9.18.16-1~deb12u1-Debian <<>> -x 192.168.50.201
-;; global options: +cmd
-;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 42538
-;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
-
-;; OPT PSEUDOSECTION:
-; EDNS: version: 0, flags:; udp: 1232
-; COOKIE: 1243d45040e483a40100000064a158a267d640f9ea542732 (good)
-;; QUESTION SECTION:
-;201.50.168.192.in-addr.arpa.   IN      PTR
-
-;; ANSWER SECTION:
-201.50.168.192.in-addr.arpa. 604800 IN  PTR     srv-linux-02.cyberlitech.lan.
-
-;; Query time: 0 msec
-;; SERVER: 192.168.50.203#53(192.168.50.203) (UDP)
-;; WHEN: Sun Jul 02 12:59:46 CEST 2023
-;; MSG SIZE  rcvd: 126
-```
-Toujours depuis la machine srv-linux-01 (192.168.50.200).
-
-- Test nslookup free.fr (FAI) :
-```
-nslookup free.fr
-Server:         192.168.50.203
-Address:        192.168.50.203#53
-
-Non-authoritative answer:
-Name:   free.fr
-Address: 212.27.48.10
-Name:   free.fr
-Address: 2a01:e0c:1::1
-```
-Toujours depuis la machine srv-linux-01 (192.168.50.200).
-
-- Test dig -x free.fr (FAI) :
-```
-dig -x free.fr
-
-; <<>> DiG 9.18.16-1~deb12u1-Debian <<>> -x free.fr
-;; global options: +cmd
-;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 13318
-;; flags: qr rd ra ad; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1
-
-;; OPT PSEUDOSECTION:
-; EDNS: version: 0, flags:; udp: 1232
-; COOKIE: aa39138fd0fc2fbc0100000064a15b990b85631beede1289 (good)
-;; QUESTION SECTION:
-;fr.free.in-addr.arpa.          IN      PTR
-
-;; AUTHORITY SECTION:
-in-addr.arpa.           709     IN      SOA     b.in-addr-servers.arpa. nstld.iana.org. 2022091606 1800 900 604800 3600
-
-;; Query time: 4 msec
-;; SERVER: 192.168.50.203#53(192.168.50.203) (UDP)
-;; WHEN: Sun Jul 02 13:12:25 CEST 2023
-;; MSG SIZE  rcvd: 161
-```
+**Fin du TP — Bravo 🎯**  
+Vous avez un **DNS maître** fonctionnel, vérifié et raisonnablement **sécurisé** pour un LAN.
 
 ---
 
