@@ -95,9 +95,9 @@ Le contenu est structuré, accessible et optimisé SEO pour répondre aux besoin
                         │
                         │
                 ┌───────┴────────┐
-                │   DNS Maître    │
-                │ ns1.mondomaine  │
-                │ 192.168.1.10    │
+                │   DNS Maître   │
+                │ ns1.mondomaine │
+                │ 192.168.1.10   │
                 └───────┬────────┘
                         │
         ┌───────────────┴────────────────┐
