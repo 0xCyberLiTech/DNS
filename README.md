@@ -86,6 +86,7 @@ Le contenu est structuré, accessible et optimisé SEO pour répondre aux besoin
 | **03** | Les 4 types de serveurs DNS impliqués dans une requête. | [<img src="https://img.shields.io/badge/EXPLORER-4CAF50?style=for-the-badge&logo=github&logoColor=white">](#balise_03) |
 | **04** | Différence entre DNS de référence et résolveur récursif. | [<img src="https://img.shields.io/badge/EXPLORER-4CAF50?style=for-the-badge&logo=github&logoColor=white">](#balise_04) |
 | **05** | Installation & configuration d'un serveur DNS Maître sous DEBIAN 12. | [<img src="https://img.shields.io/badge/EXPLORER-4CAF50?style=for-the-badge&logo=github&logoColor=white">](Installation_&_configuration_d_un_serveur_DNS_Maître_BIND9_ous_Debian_12.md) |
+| **05** | Installation & configuration d'un serveur DNS Maître sous DEBIAN 13. | [<img src="https://img.shields.io/badge/EXPLORER-4CAF50?style=for-the-badge&logo=github&logoColor=white">](Installation_&_configuration_d_un_serveur_DNS_Maître_BIND9_ous_Debian_13.md) |
 | **06** | Exemple de configuration d'un serveur DNS Esclave. | [<img src="https://img.shields.io/badge/EXPLORER-4CAF50?style=for-the-badge&logo=github&logoColor=white">](Exemple_server_DNS_esclave.md) |
 
 </div>
