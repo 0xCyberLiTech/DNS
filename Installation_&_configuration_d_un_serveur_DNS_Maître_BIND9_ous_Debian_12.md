@@ -538,7 +538,8 @@ Puis déclarez la zone en `type slave;` sur ns2 avec `masters { 192.168.1.10; };
 
 ---
 
-**Fin du TP — Bravo 🎯**  
+**Fin du TP — Bravo 🎯** 
+
 Vous avez un **DNS maître** fonctionnel, vérifié et raisonnablement **sécurisé** pour un LAN.
 
 ---
