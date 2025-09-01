@@ -88,7 +88,7 @@ Le contenu est structuré, accessible et optimisé SEO pour répondre aux besoin
   | **05** | Installation & configuration d'un serveur DNS Maître sous DEBIAN 12. | [<img src="https://img.shields.io/badge/EXPLORER-4CAF50?style=for-the-badge&logo=github&logoColor=white">](Installation_&_configuration_d_un_serveur_DNS_Maître_BIND9_ous_Debian_12.md) |
   | **05** | Installation & configuration d'un serveur DNS Maître sous DEBIAN 13. | [<img src="https://img.shields.io/badge/EXPLORER-4CAF50?style=for-the-badge&logo=github&logoColor=white">](Installation_&_configuration_d_un_serveur_DNS_Maître_BIND9_ous_Debian_13.md) |
   | **07** | Installation & configuration d'un serveur DNS Esclave sous DEBIAN 12. | [<img src="https://img.shields.io/badge/EXPLORER-4CAF50?style=for-the-badge&logo=github&logoColor=white">](Installation_&_configuration_d_un_serveur_DNS_Esclave_BIND9_sous_Debian_12.md) |
-  | **08** | Installation & configuration d'un serveur DNS Maître sous DEBIAN 13. | [<img src="https://img.shields.io/badge/EXPLORER-4CAF50?style=for-the-badge&logo=github&logoColor=white">](Installation_&_configuration_d_un_serveur_DNS_Esclave_BIND9_sous_Debian_13.md) |
+  | **08** | Installation & configuration d'un serveur DNS Esclave sous DEBIAN 13. | [<img src="https://img.shields.io/badge/EXPLORER-4CAF50?style=for-the-badge&logo=github&logoColor=white">](Installation_&_configuration_d_un_serveur_DNS_Esclave_BIND9_sous_Debian_13.md) |
 
 </div>
 
