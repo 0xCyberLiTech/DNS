@@ -10,7 +10,6 @@
   
   <h2>Laboratoire numérique pour la cybersécurité, Linux & IT</h2>
 
-
   <p align="center">
     <a href="https://0xcyberlitech.github.io/">
       <img src="https://img.shields.io/badge/Portfolio-0xCyberLiTech-181717?logo=github&style=flat-square" alt="Portfolio" />
@@ -33,10 +32,6 @@
   </p>
 
 </div>
-
-<!--
-Optimisation SEO : mots-clés cybersécurité, Linux, administration système, sécurité informatique, tutoriels, guides, expertise, formation, supervision, Docker, OpenVAS, firewall, proxy, DNS, SSH, Debian, IT, réseau, cryptographie, open source, ressources techniques, étudiants, professionnels, passionnés.
--->
 
 <div align="center">
   <img src="https://img.icons8.com/fluency/96/000000/cyber-security.png" alt="CyberSec" width="80"/>
