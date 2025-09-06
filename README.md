@@ -73,8 +73,6 @@ Le contenu est structuré, accessible et optimisé SEO pour répondre aux besoin
 
 <div align="center">
 
-  **Catégories des projets :**
-<br><br/>
   | Chapitre | Description                                                           | Accès Rapide                                                                                                                                                                               |
   |----------|-----------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
   | **01**   | Qu'est-ce que le DNS ?                                                | [<img src="https://img.shields.io/badge/EXPLORER-4CAF50?style=for-the-badge&logo=github&logoColor=white">](#balise_01)                                                                     |
