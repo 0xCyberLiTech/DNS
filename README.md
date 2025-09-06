@@ -69,8 +69,6 @@ Le contenu est structuré, accessible et optimisé SEO pour répondre aux besoin
 
 </div>
 
----
-
 <div align="center">
 
   | Chapitre | Description                                                           | Accès Rapide                                                                                                                                                                               |
