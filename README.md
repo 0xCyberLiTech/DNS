@@ -91,7 +91,7 @@ Le contenu est structuré, accessible et optimisé SEO pour répondre aux besoin
 </div>
 
 <a name="balise_01"></a>
-## Qu'est-ce que le DNS ?
+## Qu'est-ce que le DNS, à quoi sert-il ?
 
 Le DNS (Domain Name System, système de nom de domaine) est en quelque sorte le répertoire téléphonique d'Internet. Les internautes accèdent aux informations en ligne via des noms de domaine (par exemple, nytimes.com ou espn.com), tandis que les navigateurs interagissent par le biais d'adresses IP (Internet Protocol, protocole Internet). Le DNS traduit les noms de domaine en adresses IP afin que les navigateurs puissent charger les ressources web.
 
